@@ -38,9 +38,9 @@ const Home = () => {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">W</span>
+              <span className="text-white font-bold text-lg">Vinstocks</span>
             </div>
-            <span className="text-xl font-bold text-white">Waya</span>
+            <span className="text-xl font-bold text-white">Wealth</span>
           </div>
           
           <div className="flex items-center space-x-4">
@@ -72,7 +72,7 @@ const Home = () => {
             <h2 className="text-2xl font-bold text-white mb-4">What's Next?</h2>
             <ul className="text-gray-300 space-y-2 text-left">
               <li>• AI-powered market predictions</li>
-              <li>• Real-time trading signals</li>
+              <li>• Real-time stock Analysis report</li>
               <li>• Portfolio analytics</li>
               <li>• Risk assessment tools</li>
             </ul>
