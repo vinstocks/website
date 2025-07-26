@@ -47,7 +47,14 @@ const Header = () => {
 
 />
 
-<span className="text-xl font-bold text-white">VINSTOCKS</span>
+<div className="flex flex-col items-end leading-tight">
+    <span className="text-xl font-bold text-white">VINSTOCKS</span>
+    <span className="text-sm font-semibold text-orange-400 font-serif tracking-wide">WEALTH</span>
+  </div>
+
+
+
+
 
 </div>
         

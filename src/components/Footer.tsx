@@ -34,15 +34,15 @@ const Footer = () => {
                 technology.
               </p>
               
-              <p className="text-gray-500 text-sm">
+              {/* <p className="text-gray-500 text-sm">
                 SEBI Registered Research Analyst - INH000010876
-              </p>
+              </p> */}
             </div>
           </div>
           
           {/* Quick Links */}
           <div className="space-y-6">
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <a href="#about" className="block text-gray-300 hover:text-white transition-colors">
                 About Us
               </a>
@@ -58,7 +58,7 @@ const Footer = () => {
               <a href="#disclaimer" className="block text-gray-300 hover:text-white transition-colors">
                 Disclaimer
               </a>
-            </div>
+            </div> */}
           </div>
           
           {/* Contact & App Download */}
@@ -66,13 +66,13 @@ const Footer = () => {
             <div>
               <h4 className="text-white font-semibold mb-4">Contact Us</h4>
               <div className="space-y-2 text-gray-400">
-                <p>Email: support@waya.com</p>
-                <p>Phone: +91 98765 43210</p>
+                <p>Email: vinstocks.help@gmail.com</p>
+                <p>Phone: +91 7977524553</p>
                 <p>Address: Mumbai, Maharashtra</p>
               </div>
             </div>
             
-            <div>
+            {/* <div>
               <h4 className="text-white font-semibold mb-4">Download the app</h4>
               <div className="flex space-x-3">
                 <div className="bg-black rounded-lg px-4 py-2 flex items-center space-x-2 cursor-pointer hover:bg-gray-800 transition-colors">
@@ -82,14 +82,20 @@ const Footer = () => {
                   <span className="text-white text-sm">App Store</span>
                 </div>
               </div>
-            </div>
+            </div> */}
             
             <div>
               <p className="text-gray-400 text-sm mb-2">Follow us on</p>
               <div className="flex space-x-3">
-                <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-600 transition-colors">
+                <a
+                  href="https://instagram.com/vinstockss"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-700 rounded-lg px-3 py-2 flex items-center space-x-1 cursor-pointer hover:bg-gray-600 transition-colors"
+                >
                   <span className="text-white text-sm">IG</span>
-                </div>
+                  <span className="text-white text-sm">vinstockss</span>
+                </a>
               </div>
             </div>
           </div>
@@ -97,12 +103,12 @@ const Footer = () => {
         
         <div className="border-t border-white/10 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-500 text-sm">
+            {/* <p className="text-gray-500 text-sm">
               Data Powered by CMOTS INFOTECH - ISO Certified<br />
               9001:2015 www.cmots.com
-            </p>
+            </p> */}
             <p className="text-gray-500 text-sm">
-              © 2024 Waya. All rights reserved.
+              © 2025 Vinstocks. All rights reserved.
             </p>
           </div>
         </div>
