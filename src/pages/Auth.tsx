@@ -71,9 +71,9 @@ const Auth = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">Vinstocks</span>
+              <span className="text-white font-bold text-lg">V</span>
             </div>
-            <span className="text-xl font-bold text-white">Wealth</span>
+            <span className="text-xl font-bold text-white">Vinstocks</span>
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
           <p className="text-gray-400">Sign in to your account to continue</p>
