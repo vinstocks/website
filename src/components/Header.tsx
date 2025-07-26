@@ -74,9 +74,9 @@ const Header = () => {
         </nav>
         
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" onClick={handleAuthAction} className="text-white hover:bg-white/10">
+          {/* <Button variant="ghost" onClick={handleAuthAction} className="text-white hover:bg-white/10">
             {user ? 'Sign Out' : 'Login'}
-          </Button>
+          </Button> */}
           <Button onClick={handleGetStarted} className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white">
             {user ? 'Dashboard' : 'Get Started'}
           </Button>
