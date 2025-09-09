@@ -112,7 +112,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="bg-gray-700 rounded-lg px-3 py-2 flex items-center space-x-1 cursor-pointer hover:bg-gray-600 transition-colors"
                 >
-                  <span className="text-white text-sm">IG</span>
+                  <img src="/insta.svg" alt="Instagram" width={18} height={18} className="inline-block" />
                   <span className="text-white text-sm">vinstockss</span>
                 </a>
               </div>
