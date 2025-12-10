@@ -128,7 +128,7 @@ const Pricing = () => {
         </div>
 
         {/* Smart Portfolio */}
-        <div className="max-w-md mx-auto">
+        {/* <div className="max-w-md mx-auto">
           <div className="p-6 rounded-2xl border border-secondary/50 bg-gradient-to-b from-secondary/10 to-transparent flex flex-col h-full">
             <div className="w-12 h-12 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center text-2xl font-bold mb-4">
               {smartPortfolio.letter}
@@ -161,7 +161,7 @@ const Pricing = () => {
               Get Smart Portfolio
             </a>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );
