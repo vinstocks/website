@@ -1,21 +1,20 @@
-
-import Header from '@/components/Header';
-import HeroSection from '@/components/HeroSection';
-import WhatWeDoSection from '@/components/WhatWeDoSection';
-import WhatYouGetSection from '@/components/WhatYouGetSection';
-// import TestimonialsSection from '@/components/TestimonialsSection';
-import SubscriptionsSection from '@/components/SubscriptionsSection';
-import Footer from '@/components/Footer';
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import Features from "@/components/Features";
+import Services from "@/components/Services";
+import Pricing from "@/components/Pricing";
+import Footer from "@/components/Footer";
+import MarketTicker from "@/components/MarketTicker";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <HeroSection />
-      <WhatWeDoSection />
-      <WhatYouGetSection />
-      {/* <TestimonialsSection /> */}
-      <SubscriptionsSection />
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <MarketTicker />
+      <Hero />
+      <Features />
+      <Services />
+      <Pricing />
       <Footer />
     </div>
   );
