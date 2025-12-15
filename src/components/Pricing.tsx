@@ -1,4 +1,5 @@
-import { Check, Star } from "lucide-react";
+import { Check, Star, X } from "lucide-react";
+import { useState } from "react";
 import CoinStack from "./illustrations/CoinStack";
 
 const plans = [
@@ -63,6 +64,8 @@ const smartPortfolio = {
 };
 
 const Pricing = () => {
+  const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
+
   return (
     <section id="pricing" className="py-24 relative">
       {/* Decorative coin stack */}
@@ -85,7 +88,8 @@ const Pricing = () => {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative p-6 rounded-2xl border transition-all duration-300 hover:scale-105 flex flex-col h-full ${
+              onClick={() => setSelectedPlan(plan)}
+              className={`relative p-6 rounded-2xl border transition-all duration-300 hover:scale-105 flex flex-col h-full cursor-pointer ${
                 plan.popular
                   ? "border-primary bg-gradient-to-b from-primary/10 to-transparent glow-primary"
                   : "border-border card-gradient"
@@ -109,12 +113,22 @@ const Pricing = () => {
               </div>
 
               <ul className="space-y-3 mb-8">
-                {plan.features.map((feature) => (
+                {plan.features.slice(0, 3).map((feature) => (
                   <li key={feature} className="flex items-start gap-3 text-sm text-muted-foreground">
                     <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
                     {feature}
                   </li>
                 ))}
+                {plan.features.length > 3 && (
+                  <li>
+                    <button
+                      onClick={() => setSelectedPlan(plan)}
+                      className="text-primary hover:text-primary/80 text-sm font-semibold transition-colors"
+                    >
+                      More...
+                    </button>
+                  </li>
+                )}
               </ul>
 
               <a
@@ -123,6 +137,7 @@ const Pricing = () => {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className={`w-full inline-flex items-center justify-center py-3 rounded-xl font-semibold transition-all mt-auto ${
                   plan.popular
                     ? "bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90"
@@ -135,41 +150,63 @@ const Pricing = () => {
           ))}
         </div>
 
-        {/* Smart Portfolio */}
-        {/* <div className="max-w-md mx-auto">
-          <div className="p-6 rounded-2xl border border-secondary/50 bg-gradient-to-b from-secondary/10 to-transparent flex flex-col h-full">
-            <div className="w-12 h-12 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center text-2xl font-bold mb-4">
-              {smartPortfolio.letter}
+        {/* Modal */}
+        {selectedPlan && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-b from-card to-background shadow-2xl">
+              {/* Close button */}
+              <button
+                onClick={() => setSelectedPlan(null)}
+                className="absolute top-4 right-4 p-2 rounded-full bg-muted/50 hover:bg-muted transition-colors z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Header */}
+              <div className="p-8 border-b border-border bg-gradient-to-r from-primary/10 to-secondary/10">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-xl bg-primary/15 text-primary flex items-center justify-center text-3xl font-bold">
+                    {selectedPlan.letter}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-foreground mb-1">{selectedPlan.name}</h3>
+                    <div>
+                      <span className="text-3xl font-bold text-foreground">{selectedPlan.price}</span>
+                      <span className="text-muted-foreground"> / {selectedPlan.period}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Features list */}
+              <div className="p-8 overflow-y-auto max-h-[calc(90vh-280px)]">
+                <h4 className="text-lg font-semibold mb-4 text-foreground">All Features</h4>
+                <ul className="space-y-3">
+                  {selectedPlan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3 text-muted-foreground">
+                      <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Footer with CTA */}
+              <div className="p-6 border-t border-border bg-card">
+                <a
+                  href={`https://wa.me/917977524553?text=${encodeURIComponent(
+                    `Hi Vinstocks, I want to know more about the ${selectedPlan.name} plan.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center py-3 rounded-xl font-semibold transition-all bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90"
+                >
+                  Know More
+                </a>
+              </div>
             </div>
-
-            <h3 className="text-xl font-bold text-foreground mb-2">{smartPortfolio.name}</h3>
-            
-            <div className="mb-6">
-              <span className="text-3xl font-bold text-foreground">{smartPortfolio.price}</span>
-              <span className="text-muted-foreground"> / {smartPortfolio.period}</span>
-            </div>
-
-            <ul className="space-y-3 mb-8">
-              {smartPortfolio.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-
-            <a
-              href={`https://wa.me/917977524553?text=${encodeURIComponent(
-                `Hi Vinstocks, I want to know more about the ${smartPortfolio.name}.`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center py-3 rounded-xl font-semibold bg-secondary text-white hover:opacity-90 transition-opacity mt-auto"
-            >
-              Get Smart Portfolio
-            </a>
           </div>
-        </div> */}
+        )}
       </div>
     </section>
   );

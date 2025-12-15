@@ -17,12 +17,17 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <img src={logo} alt="Vinstocks" className="w-12 h-12 rounded-lg" />
-              <span className="text-2xl font-bold">
-                <span className="text-primary">VIN</span>
-                <span className="text-secondary">STOCKS</span>
-              </span>
+              <div className="relative">
+                <span className="text-2xl font-bold">
+                  <span className="text-primary">VIN</span>
+                  <span className="text-secondary">STOCKS</span>
+                </span>
+                <span className="absolute -bottom-1 right-0 text-[8px] md:text-[10px] font-semibold text-muted-foreground tracking-wider text-primary" style={{bottom: '-0.45rem'}}>
+                  WEALTH
+                </span>
               </div>
-                <p className="text-muted-foreground mb-4 leading-relaxed">
+            </div>
+            <p className="text-muted-foreground mb-4 leading-relaxed">
                   An investment advisory service tailored for ambitious retailers seeking expert guidance in the Indian equity market. 
                   Benefit from a personalized investment roadmap engineered to align with your capital goals and risk profile.
                   <br /><br />

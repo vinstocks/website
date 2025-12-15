@@ -7,6 +7,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit&display=swap");
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
   :root {
     --background: 48 100% 96.0784%;
     --foreground: 220 20% 15%;

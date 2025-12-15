@@ -22,62 +22,79 @@ const topLosers = [
   { symbol: "BPCL", price: "567.20", change: "-1.43%" },
 ];
 
-const MarketTicker = () => {
+// Top Gainers - Sticks below header with scrolling
+export const TopGainers = () => {
   return (
-    <div className="relative w-full bg-background/80 backdrop-blur-sm border-y border-border/50 shadow-sm mt-16 md:mt-20">
-        
-      {/* Top Gainers */}
-      <div className="relative overflow-hidden py-2.5 border-b border-border/30">
-        <div className="flex items-center gap-2 px-4 mb-1.5">
-          <TrendingUp className="w-4 h-4 text-success" />
-          <span className="text-xs font-bold text-success tracking-wide">TOP GAINERS</span>
-        </div>
-        <div className="flex animate-scroll-left">
-          {[...topGainers, ...topGainers].map((stock, index) => (
-            <div
-              key={`gainer-${index}`}
-              className="flex items-center gap-2 px-6 py-1 whitespace-nowrap border-r border-border/30"
-            >
-              <span className="font-semibold text-foreground text-sm">
-                {stock.symbol}
-              </span>
-              <span className="text-muted-foreground text-xs">
-                ₹{stock.price}
-              </span>
-              <span className="text-success text-xs font-medium bg-success/10 px-2 py-0.5 rounded">
-                {stock.change}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Top Losers */}
+    <div className="fixed top-16 md:top-20 left-0 right-0 z-40 w-full bg-background/80 backdrop-blur-sm border-b border-border/50 shadow-sm">
       <div className="relative overflow-hidden py-2.5">
-        <div className="flex items-center gap-2 px-4 mb-1.5">
-          <TrendingDown className="w-4 h-4 text-destructive" />
-          <span className="text-xs font-bold text-destructive tracking-wide">TOP LOSERS</span>
+        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center gap-2 px-4 bg-background border-r border-border/30">
+          <TrendingUp className="w-4 h-4 text-success" />
         </div>
-        <div className="flex animate-scroll-right">
-          {[...topLosers, ...topLosers].map((stock, index) => (
-            <div
-              key={`loser-${index}`}
-              className="flex items-center gap-2 px-6 py-1 whitespace-nowrap border-r border-border/30"
-            >
-              <span className="font-semibold text-foreground text-sm">
-                {stock.symbol}
-              </span>
-              <span className="text-muted-foreground text-xs">
-                ₹{stock.price}
-              </span>
-              <span className="text-destructive text-xs font-medium bg-destructive/10 px-2 py-0.5 rounded">
-                {stock.change}
-              </span>
-            </div>
-          ))}
+        <div className="flex items-center">
+          <div className="flex animate-scroll-left" style={{ paddingLeft: '140px' }}>
+            {[...topGainers, ...topGainers].map((stock, index) => (
+              <div
+                key={`gainer-${index}`}
+                className="flex items-center gap-2 px-6 py-1 whitespace-nowrap border-r border-border/30"
+              >
+                <span className="font-semibold text-foreground text-sm">
+                  {stock.symbol}
+                </span>
+                <span className="text-muted-foreground text-xs">
+                  ₹{stock.price}
+                </span>
+                <span className="text-success text-xs font-medium bg-success/10 px-2 py-0.5 rounded">
+                  {stock.change}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
+  );
+};
+
+// Top Losers - Sticks at bottom without scrolling
+export const TopLosers = () => {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-40 w-full bg-background/80 backdrop-blur-sm border-t border-border/50 shadow-sm">
+      <div className="relative overflow-hidden py-2.5">
+        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center gap-2 px-4 bg-background border-r border-border/30">
+          <TrendingDown className="w-4 h-4 text-destructive" />
+        </div>
+        <div className="flex items-center">
+          <div className="flex animate-scroll-right" style={{ paddingLeft: '140px' }}>
+            {[...topLosers, ...topLosers].map((stock, index) => (
+              <div
+                key={`loser-${index}`}
+                className="flex items-center gap-2 px-6 py-1 whitespace-nowrap border-r border-border/30"
+              >
+                <span className="font-semibold text-foreground text-sm">
+                  {stock.symbol}
+                </span>
+                <span className="text-muted-foreground text-xs">
+                  ₹{stock.price}
+                </span>
+                <span className="text-destructive text-xs font-medium bg-destructive/10 px-2 py-0.5 rounded">
+                  {stock.change}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Keep original export for backward compatibility
+const MarketTicker = () => {
+  return (
+    <>
+      <TopGainers />
+      <TopLosers />
+    </>
   );
 };
 

@@ -25,10 +25,6 @@ const services = [
 const Services = () => {
   return (
     <section className="py-24 relative bg-muted/30">
-      {/* Decorative element */}
-      <div className="absolute left-10 bottom-20 hidden xl:block opacity-30 rotate-12">
-        <ChartArrow className="w-40 h-28" />
-      </div>
       
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
