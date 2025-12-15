@@ -21,11 +21,14 @@ const Footer = () => {
                 <span className="text-primary">VIN</span>
                 <span className="text-secondary">STOCKS</span>
               </span>
-            </div>
-            <p className="text-muted-foreground mb-4 leading-relaxed">
-              An investment advisory service designed for ambitious retailers seeking expert guidance in the Indian equity market. Benefit from a personalized investment roadmap engineered to align with your capital goals and risk profile.
-            </p>
-          </div>
+              </div>
+                <p className="text-muted-foreground mb-4 leading-relaxed">
+                  An investment advisory service tailored for ambitious retailers seeking expert guidance in the Indian equity market. 
+                  Benefit from a personalized investment roadmap engineered to align with your capital goals and risk profile.
+                  <br /><br />
+                  <span className="font-semibold text-teal-600">SEBI Registered IA Application No:</span> 1600049
+                </p>
+              </div>
 
           {/* Contact */}
           <div>
@@ -51,7 +54,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground">
                 <MapPin className="w-5 h-5" />
-                Mumbai, Maharashtra
+                504 Edge, Runwal Gardens, Thane, Mumbai, Maharashtra
               </li>
             </ul>
           </div>

@@ -4,14 +4,14 @@ import ChartArrow from "./illustrations/ChartArrow";
 const services = [
   {
     icon: Zap,
-    title: "Short term calls",
-    description: "We give calls with hold period ranging from ~2 days to ~45 days",
+    title: "Mid-term recommendations",
+    description: "We recommend stocks with holding period ranging from 3 to 8 Months",
     gradient: "from-primary to-amber-400",
   },
   {
     icon: Gem,
     title: "Multibagger Portfolio",
-    description: "Curated portfolio with potential 3x-10x returns within duration of 30 months",
+    description: "Curated portfolio with potential 3x-10x returns within duration of 3 to 5 years",
     gradient: "from-secondary to-cyan-400",
   },
   {
@@ -33,7 +33,7 @@ const Services = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            What You <span className="text-gradient">Get?</span>
+            What will you <span className="text-gradient">Get?</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Comprehensive investment solutions tailored for the modern investor

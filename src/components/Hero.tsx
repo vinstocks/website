@@ -6,7 +6,7 @@ import WhatsAppIcon from "@/assets/WhatsAppIcon";
 
 const Hero = () => {
   return (
-    <section className="relative flex items-center justify-center overflow-hidden" style={{height: `calc(100vh - 80px - 140px)`}}>
+    <section className="relative flex items-center justify-center min-h-screen">
       <ChartBackground />
 
       {/* Decorative illustrations */}
@@ -83,7 +83,7 @@ const Hero = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-600">
               <a
-                href="#pricing"
+                href="#services"
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-semibold text-lg hover:opacity-90 transition-all glow-primary"
               >
                 Learn more

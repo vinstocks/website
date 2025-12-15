@@ -9,10 +9,13 @@ const plans = [
     period: "Yearly",
     features: [
       "Capital > 25 lacs",
-      "Portfolio Review",
-      "Multibagger portfolio",
-      "Stocks analysis report",
-      "One to one calls",
+      "Customized Portfolio",
+      "18-25 Stocks Portfolio",
+      "7-8 High Growth Sectors",
+      "Timely Entry & Exit",
+      "Allocation of Stocks",
+      "Research Report",
+      "Personal Relationship Manager",
     ],
     popular: true,
   },
@@ -22,10 +25,12 @@ const plans = [
     price: "₹20,000",
     period: "Yearly",
     features: [
-      "Capital < 25 lacs",
+      "Capital 3 - 25 lacs",
+      "Personalized Portfolio",
+      "18-25 Stocks Portfolio",
+      "7-8 High Growth Sectors",
+      "Timely Entry & Exit",
       "Portfolio Review",
-      "Stocks analysis report",
-      "Multibagger portfolio",
     ],
     popular: false,
   },
@@ -35,7 +40,10 @@ const plans = [
     price: "₹16,000",
     period: "Yearly",
     features: [
-      "Short and Midterm calls",
+      "Midterm recommendations",
+     " Time Horizon 3-8 Months",
+      "Timely Entry & Exit",
+      "Portfolio Review",
     ],
     popular: false,
   },
@@ -121,7 +129,7 @@ const Pricing = () => {
                     : "bg-muted text-foreground hover:bg-muted/80"
                 }`}
               >
-                Get Started
+                Know More
               </a>
             </div>
           ))}
