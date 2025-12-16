@@ -25,7 +25,7 @@ const topLosers = [
 // Top Gainers - Sticks below header with scrolling
 export const TopGainers = () => {
   return (
-    <div className="fixed top-16 md:top-20 left-0 right-0 z-40 w-full bg-background/80 backdrop-blur-sm border-b border-border/50 shadow-sm">
+    <div className="fixed top-14 md:top-16 left-0 right-0 z-40 w-full bg-background/80 backdrop-blur-sm border-b border-border/50 shadow-sm">
       <div className="relative overflow-hidden py-2.5">
         <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center gap-2 px-4 bg-background border-r border-border/30">
           <TrendingUp className="w-4 h-4 text-success" />

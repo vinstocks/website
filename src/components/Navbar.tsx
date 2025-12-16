@@ -27,12 +27,12 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3 group">
-            <img src={logo} alt="Vinstocks" className="w-10 h-10 md:w-12 md:h-12 rounded-lg" />
+          <a href="/" className="flex items-center gap-2 group">
+            <img src={logo} alt="Vinstocks" className="w-9 h-9 md:w-10 md:h-10 rounded-lg" />
             <div className="relative">
-              <span className="text-xl md:text-2xl font-bold">
+              <span className="text-lg md:text-xl font-bold">
                 <span className="text-primary">VIN</span>
                 <span className="text-secondary">STOCKS</span>
               </span>
@@ -87,7 +87,7 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
             ))}
             <a
               href={isPreIPOPage ? "/#pricing" : "#pricing"}
-              className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold hover:opacity-90 transition-opacity"
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold hover:opacity-90 transition-opacity text-sm"
             >
               Get Started
             </a>

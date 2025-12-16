@@ -6,7 +6,7 @@ import WhatsAppIcon from "@/assets/WhatsAppIcon";
 
 const Hero = () => {
   return (
-    <section className="relative flex items-center justify-center min-h-screen">
+    <section className="relative flex items-center justify-center min-h-screen pt-24 md:pt-28 lg:pt-32">
       <ChartBackground />
 
       {/* Decorative illustrations */}
@@ -18,16 +18,16 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className=" mx-auto text-center flex flex-row-reverse justify-evenly gap-20">
+        <div className="mx-auto text-center flex flex-col md:flex-row-reverse justify-center items-center gap-4 md:gap-8 lg:gap-20">
           {/* Logo with float animation */}
 
           <div
-            className="hidden lg:flex relative h-96 lg:h-full items-center justify-center animate-slideInRight"
+            className="flex relative h-64 md:h-80 lg:h-full items-center justify-center animate-slideInRight"
             style={{ transform: `translateY(${scrollY * 0.3}px)` }}
           >
             <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-secondary/20 rounded-full blur-3xl opacity-40 animate-pulse" />
 
-            <div className="relative w-64 h-64 lg:w-80 lg:h-80">
+            <div className="relative w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80">
               <div className="absolute inset-0 rounded-full border border-primary/30 animate-pulse" />
               <div
                 className="absolute inset-8 rounded-full border border-secondary/30 animate-pulse"
