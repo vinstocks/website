@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
-import car_mob from "@/assets/carous-mob.png";
-import car_lap from "@/assets/carous-laptop.png";
+import car_mob from "@/assets/ip1.png";
+import car_lap from "@/assets/ip2.png";
 
 const AboutUs = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -10,23 +10,25 @@ const AboutUs = () => {
     {
       id: 1,
       image: car_mob,
-      header: "Research & Ranking",
+      header: "Vinstocks Wealth",
       tiles: [
-        "Investment solutions for retail & HNI investors",
-        "A portfolio of 20 to 25 stocks (5 in S), & 1 stock every month (MPQ)",
-        "Timely buy-hold-sell recommendations",
-        "User-friendly web & app interface"
+        "Comprehensive investment solutions for retail and high‑net‑worth investors",
+        "Diversified portfolio of 18–25 equities",
+        "Disciplined buy, hold, and sell recommendations delivered with precision",
+        "Certified Relationship Manager"
       ]
+      
     },
     {
       id: 2,
       image: car_lap,
-      header: "Advanced Analytics",
+      header: "Vinstocks Wealth",
       tiles: [
-        "Real-time market insights and data visualization",
+        "Financial Planning",
         "AI-powered stock screening and analysis",
         "Comprehensive portfolio tracking and reporting",
-        "Expert guidance from SEBI registered advisors"
+        "Portfolio Rebalancing as and when required",
+        "Asset Allocation & Risk Management"
       ]
     }
   ];
@@ -34,7 +36,7 @@ const AboutUs = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000); // Auto-scroll every 5 seconds
+    }, 10000); // Auto-scroll every 5 seconds
 
     return () => clearInterval(interval);
   }, [slides.length]);
@@ -48,7 +50,7 @@ const AboutUs = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-b from-background to-muted/30 relative overflow-hidden">
+    <section id="about" className="py-20 bg-gradient-to-b from-background to-muted/30 relative overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">

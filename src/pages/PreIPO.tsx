@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { TopGainers, TopLosers } from "@/components/MarketTicker";
 import WhatsAppIcon from "@/assets/WhatsAppIcon";
-import illustration from "@/assets/preipo/illustration.png";
+import illustration from "@/assets/preipo/IPO.png";
 import company1 from "@/assets/preipo/Screenshot 2025-12-16 030755.jpg";
 import company2 from "@/assets/preipo/Screenshot 2025-12-16 030840.jpg";
 import company3 from "@/assets/preipo/Screenshot 2025-12-16 030918.jpg";
@@ -11,9 +11,9 @@ import company5 from "@/assets/preipo/Screenshot 2025-12-16 031010.jpg";
 import company6 from "@/assets/preipo/image-removebg-preview.png";
 
 const companies = [
-  { id: 1, image: company1, name: "Bira" },
+  // { id: 1, image: company1, name: "Bira" },
   { id: 2, image: company2, name: "Capgemini" },
-  { id: 3, image: company3, name: "HDB Financial Services" },
+  // { id: 3, image: company3, name: "HDB Financial Services" },
   { id: 4, image: company4, name: "OYO" },
   { id: 5, image: company5, name: "Chennai Super Kings" },
   { id: 6, image: company6, name: "NSE" },

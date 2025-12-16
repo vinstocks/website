@@ -15,8 +15,9 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
       ]
     : [
         { name: "Pre IPO", href: "/pre-ipo" },
-        { name: "Services", href: "#services" },
-        { name: "Investment Advisor", href: "#pricing" },
+        { name: "Services", href: "#pricing" },
+        // { name: "Investment Advisory", href: "#pricing" },
+        { name: "About Us", href: "#about" },
         { name: "Contact", href: "#contact" },
       ];
 

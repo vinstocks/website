@@ -4,7 +4,7 @@ import ChartArrow from "./illustrations/ChartArrow";
 const services = [
   {
     icon: Zap,
-    title: "Mid-term recommendations",
+    title: "Mid-term Recommendations",
     description: "We recommend stocks with holding period ranging from 3 to 8 Months",
     gradient: "from-primary to-amber-400",
   },
