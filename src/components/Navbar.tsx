@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 interface NavbarProps {
@@ -8,15 +8,18 @@ interface NavbarProps {
 
 const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+
+  const servicesItems = [
+    { name: "Pre-IPO", href: "/pre-ipo" },
+    { name: "Investment Advisory", href: "#pricing" },
+  ];
 
   const navLinks = isPreIPOPage
     ? [
         { name: "Home", href: "/" },
       ]
     : [
-        { name: "Pre IPO", href: "/pre-ipo" },
-        { name: "Services", href: "#pricing" },
-        // { name: "Investment Advisory", href: "#pricing" },
         { name: "About Us", href: "#about" },
         { name: "Contact", href: "#contact" },
       ];
@@ -41,6 +44,38 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
+            {/* Services Dropdown */}
+            {!isPreIPOPage && (
+              <div
+                className="relative"
+                onMouseEnter={() => setIsServicesOpen(true)}
+                onMouseLeave={() => setIsServicesOpen(false)}
+              >
+                <button className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1">
+                  Services
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isServicesOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {isServicesOpen && (
+                  <div className="absolute top-full left-0 pt-2 w-48 z-50">
+                    <div className="bg-card border border-border rounded-lg shadow-lg overflow-hidden">
+                      {servicesItems.map((item) => (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          className="block px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors font-medium"
+                        >
+                          {item.name}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -70,6 +105,39 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in-up">
+            {/* Services Dropdown Mobile */}
+            {!isPreIPOPage && (
+              <div>
+                <button
+                  onClick={() => setIsServicesOpen(!isServicesOpen)}
+                  className="flex items-center justify-between w-full py-3 text-muted-foreground hover:text-foreground transition-colors font-medium"
+                >
+                  Services
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isServicesOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {isServicesOpen && (
+                  <div className="pl-4 border-l-2 border-border">
+                    {servicesItems.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className="block py-2 text-muted-foreground hover:text-foreground transition-colors font-medium"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setIsServicesOpen(false);
+                        }}
+                      >
+                        {item.name}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
             {navLinks.map((link) => (
               <a
                 key={link.name}
