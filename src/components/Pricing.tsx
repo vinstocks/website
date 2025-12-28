@@ -1,7 +1,6 @@
 import { Check, Star, X } from "lucide-react";
 import { useState } from "react";
 import CoinStack from "./illustrations/CoinStack";
-
 const plans = [
   {
     name: "Vinstocks Elite",
@@ -42,9 +41,23 @@ const plans = [
     period: "Yearly",
     features: [
       "Midterm recommendations",
-     " Time Horizon 3-8 Months",
+      "1 to 2 Stocks a month",
+      "Time Horizon 3-8 Months",
       "Timely Entry & Exit",
       "Portfolio Review",
+    ],
+    popular: false,
+  },
+  {
+    name: "Portfolio Checkup",
+    letter: "+",
+    price: "₹2000",
+    period: "-",
+    features: [
+      "Equity and Mutual Funds",
+      "Detailed Review of Existing Holdings",
+      "Exits with Proper Rationale",
+      "Levels to Exit and Average",
     ],
     popular: false,
   },
@@ -84,7 +97,8 @@ const Pricing = () => {
         </div>
 
         {/* Main Plans */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+        {/* <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12"> */}
+        <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
           {plans.map((plan) => (
             <div
               key={plan.name}
