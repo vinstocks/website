@@ -1,6 +1,7 @@
 import { Check, Star, X } from "lucide-react";
 import { useState } from "react";
 import CoinStack from "./illustrations/CoinStack";
+
 const plans = [
   {
     name: "Vinstocks Elite",
@@ -63,19 +64,6 @@ const plans = [
   },
 ];
 
-const smartPortfolio = {
-  name: "Smart Portfolio Basket",
-  letter: "M",
-  price: "₹6000",
-  period: "6 months",
-  features: [
-    "Future-Focused Stock Selection",
-    "Risk Mitigation",
-    "Goal-Oriented Approach",
-    "Diversified Investment Baskets",
-  ],
-};
-
 const Pricing = () => {
   const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
 
@@ -97,7 +85,6 @@ const Pricing = () => {
         </div>
 
         {/* Main Plans */}
-        {/* <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12"> */}
         <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
           {plans.map((plan) => (
             <div
@@ -106,7 +93,7 @@ const Pricing = () => {
               className={`relative p-6 rounded-2xl border transition-all duration-300 hover:scale-105 flex flex-col h-full cursor-pointer ${
                 plan.popular
                   ? "border-primary bg-gradient-to-b from-primary/10 to-transparent glow-primary"
-                  : "border-border card-gradient"
+                  : "border-green-400 bg-gradient-to-b from-green-50 to-transparent"
               }`}
             >
               {plan.popular && (
@@ -155,7 +142,7 @@ const Pricing = () => {
                 className={`w-full inline-flex items-center justify-center py-3 rounded-xl font-semibold transition-all mt-auto ${
                   plan.popular
                     ? "bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90"
-                    : "bg-muted text-foreground hover:bg-muted/80"
+                    : "bg-green-500 text-white hover:bg-green-600"
                 }`}
               >
                 Know More
