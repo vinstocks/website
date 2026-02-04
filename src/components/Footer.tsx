@@ -31,7 +31,7 @@ const Footer = () => {
                   An investment advisory service tailored for ambitious retailers seeking expert guidance in the Indian equity market. 
                   Benefit from a personalized investment roadmap engineered to align with your capital goals and risk profile.
                   <br /><br />
-                  <span className="font-semibold text-teal-600">SEBI Registered IA Application No:</span> 1600049
+                  <span className="font-semibold text-teal-600">SEBI Registered Investment Advisor:</span> INA000021766
                 </p>
               </div>
 

@@ -74,11 +74,21 @@ const Hero = () => {
             </h1>
 
             {/* Subheadline */}
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-400">
+            {/* <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-400">
+              We track only fundamentally strong stocks, focus on timing, and
+              let performance speak for itself. Your trust is earned, not
+              assumed.
+            </p> */}
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-4 animate-fade-in-up animation-delay-400">
               We track only fundamentally strong stocks, focus on timing, and
               let performance speak for itself. Your trust is earned, not
               assumed.
             </p>
+
+            <p className="text-2xl md:text-3xl font-bold text-gradient tracking-wide max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-500">
+              SEBI REGISTERED
+            </p>
+
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-600">
