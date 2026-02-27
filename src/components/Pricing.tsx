@@ -11,7 +11,7 @@ const plans = [
     features: [
       "Capital > 25 lacs",
       "Customized Portfolio",
-      "18-25 Stocks Portfolio",
+      "12-18 Stocks Portfolio",
       "7-8 High Growth Sectors",
       "Timely Entry & Exit",
       "Allocation of Stocks",
@@ -28,7 +28,7 @@ const plans = [
     features: [
       "Capital 3 - 25 lacs",
       "Personalized Portfolio",
-      "18-25 Stocks Portfolio",
+      "12-18 Stocks Portfolio",
       "7-8 High Growth Sectors",
       "Timely Entry & Exit",
       "Portfolio Review",

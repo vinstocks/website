@@ -31,7 +31,9 @@ const Footer = () => {
                   An investment advisory service tailored for ambitious retailers seeking expert guidance in the Indian equity market. 
                   Benefit from a personalized investment roadmap engineered to align with your capital goals and risk profile.
                   <br /><br />
-                  <span className="font-semibold text-teal-600">SEBI Registered Investment Advisor:</span> INA000021766
+                  <span className="font-semibold text-teal-600">SEBI Registered Investment Advisor :</span> INA000021766
+                  <br />
+                  <span className="font-semibold text-teal-600">BASL :</span> 2429
                 </p>
               </div>
 
