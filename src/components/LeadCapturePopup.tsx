@@ -115,7 +115,7 @@ const LeadCapturePopup = () => {
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Start Your Wealth Creation Journey</DialogTitle>
+          <DialogTitle>Start Your Wealth Creation Journey Now</DialogTitle>
           <DialogDescription>
             Enter your name and number, and we will connect with you on WhatsApp.
           </DialogDescription>
