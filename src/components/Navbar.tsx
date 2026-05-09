@@ -20,6 +20,7 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
         { name: "Home", href: "/" },
       ]
     : [
+        { name: "SIP Calculator", href: "/sip-calculator" },
         { name: "About Us", href: "#about" },
         { name: "Contact", href: "#contact" },
       ];
