@@ -97,7 +97,7 @@ const LeadCapturePopup = () => {
     setPhoneError("");
 
     const message = encodeURIComponent(
-      `Hi Vinstocks, I want one free stock recommendation.\nName: ${trimmedName}\nPhone: ${INDIA_DIAL_CODE} ${digitsOnlyPhone}`,
+      `Hi Vinstocks, I want to start my wealth creation journey.\nName: ${trimmedName}\nPhone: ${INDIA_DIAL_CODE} ${digitsOnlyPhone}`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
     const popupWindow = window.open(whatsappUrl, "_blank");
@@ -115,7 +115,7 @@ const LeadCapturePopup = () => {
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Get One Free Stock Recommendation</DialogTitle>
+          <DialogTitle>Start Your Wealth Creation Journey</DialogTitle>
           <DialogDescription>
             Enter your name and number, and we will connect with you on WhatsApp.
           </DialogDescription>
