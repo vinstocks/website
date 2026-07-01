@@ -103,7 +103,7 @@ const Footer = () => {
 
         {/* Bottom */}
         <div className="pt-8 border-t border-border text-center text-muted-foreground text-sm">
-          © 2025 Vinstocks. All rights reserved.
+          © 2025-2026 Vinstocks. All rights reserved.
         </div>
       </div>
     </footer>
