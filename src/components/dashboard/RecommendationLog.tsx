@@ -230,7 +230,7 @@ const RecommendationLog = ({
 
   const epRecs = recs.filter((r) => r.plan_type === "elite_prime");
   const starsRecs = recs.filter((r) => r.plan_type === "stars");
-  const showElitePrime = effectivePlan !== "stars";
+  const showElitePrime = effectivePlan === "elite" || effectivePlan === "prime" || epRecs.length > 0;
   const showStars = !!effectiveHasStars || starsRecs.length > 0;
 
   return (

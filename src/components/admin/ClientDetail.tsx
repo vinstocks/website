@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { ArrowLeft, Star, Mail, Phone, Calendar, Loader2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Star, Mail, Phone, Calendar, Loader2, Pencil } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import StarsPortfolio from "@/components/dashboard/StarsPortfolio";
 import RecommendationLog from "@/components/dashboard/RecommendationLog";
 import ManageTranches from "@/components/admin/ManageTranches";
 import ManageReports from "@/components/admin/ManageReports";
+import EditClientDialog from "@/components/admin/EditClientDialog";
 import { formatCurrency } from "@/lib/utils/format";
 import { supabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
@@ -21,21 +22,23 @@ const ClientDetail = () => {
   const [client, setClient] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [editOpen, setEditOpen] = useState(false);
   const handleStockRemoved = () => setRefreshKey((k) => k + 1);
 
-  useEffect(() => {
+  const fetchClient = useCallback(async () => {
     if (!id) return;
-    const fetch = async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", id)
-        .single();
-      if (data) setClient(data as Profile);
-      setLoading(false);
-    };
-    fetch();
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", id)
+      .single();
+    if (data) setClient(data as Profile);
+    setLoading(false);
   }, [id]);
+
+  useEffect(() => {
+    fetchClient();
+  }, [fetchClient]);
 
   if (loading) {
     return (
@@ -76,7 +79,18 @@ const ClientDetail = () => {
           </div>
           <p className="text-sm text-muted-foreground mt-0.5">Client portfolio and management</p>
         </div>
+        <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+          <Pencil className="w-3.5 h-3.5 mr-1.5" />
+          Edit Details
+        </Button>
       </div>
+
+      <EditClientDialog
+        client={client}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        onSaved={fetchClient}
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Card className="p-3 flex items-center gap-3">
