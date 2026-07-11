@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface StockDisplay {
   symbol: string;
@@ -6,7 +8,8 @@ interface StockDisplay {
   change: string;
 }
 
-const topGainers: StockDisplay[] = [
+// Fallback shown until live data loads (or if the market-ticker function is unreachable)
+const fallbackGainers: StockDisplay[] = [
   { symbol: "ETERNAL", price: "280.00", change: "+5.79%" },
   { symbol: "NESTLE", price: "1,453.00", change: "+3.40%" },
   { symbol: "ASIAN PAINTS", price: "2,715.00", change: "+3.01%" },
@@ -14,7 +17,7 @@ const topGainers: StockDisplay[] = [
   { symbol: "M&M", price: "3,132.00", change: "+2.06%" },
 ];
 
-const topLosers: StockDisplay[] = [
+const fallbackLosers: StockDisplay[] = [
   { symbol: "HCL TECH", price: "1,035.40", change: "-3.40%" },
   { symbol: "TECHM", price: "1,360.00", change: "-3.19%" },
   { symbol: "TCS", price: "1,981.80", change: "-2.47%" },
@@ -22,8 +25,50 @@ const topLosers: StockDisplay[] = [
   { symbol: "TATA STEEL", price: "185.00", change: "-1.63%" },
 ];
 
+interface TickerQuote {
+  symbol: string;
+  price: number;
+  changePct: number;
+}
+
+const toDisplay = (q: TickerQuote): StockDisplay => ({
+  symbol: q.symbol,
+  price: q.price.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+  change: `${q.changePct >= 0 ? "+" : ""}${q.changePct.toFixed(2)}%`,
+});
+
+// Shared across TopGainers/TopLosers so the function is invoked once per page load
+let tickerPromise: Promise<{ gainers?: TickerQuote[]; losers?: TickerQuote[] } | null> | null = null;
+const loadTicker = () => {
+  if (!tickerPromise) {
+    tickerPromise = supabase.functions
+      .invoke("market-ticker")
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+  return tickerPromise;
+};
+
+const useTickerData = () => {
+  const [gainers, setGainers] = useState<StockDisplay[]>(fallbackGainers);
+  const [losers, setLosers] = useState<StockDisplay[]>(fallbackLosers);
+
+  useEffect(() => {
+    let mounted = true;
+    loadTicker().then((data) => {
+      if (!mounted || !data) return;
+      if (data.gainers?.length) setGainers(data.gainers.map(toDisplay));
+      if (data.losers?.length) setLosers(data.losers.map(toDisplay));
+    });
+    return () => { mounted = false; };
+  }, []);
+
+  return { gainers, losers };
+};
+
 export const TopGainers = () => {
-  const displayData = [...topGainers, ...topGainers];
+  const { gainers } = useTickerData();
+  const displayData = [...gainers, ...gainers];
 
   return (
     <div className="fixed top-14 md:top-16 left-0 right-0 z-40 w-full bg-background/80 backdrop-blur-sm border-b border-border/50 shadow-sm">
@@ -57,7 +102,8 @@ export const TopGainers = () => {
 };
 
 export const TopLosers = () => {
-  const displayData = [...topLosers, ...topLosers];
+  const { losers } = useTickerData();
+  const displayData = [...losers, ...losers];
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 w-full bg-background/80 backdrop-blur-sm border-t border-border/50 shadow-sm">
