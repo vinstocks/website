@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Search, Send, Loader2 } from "lucide-react";
+import { Search, Send, Loader2, MessageCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ const PushRecommendationForm = () => {
   const [sendWhatsApp, setSendWhatsApp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState<Profile[]>([]);
+  const [waQueue, setWaQueue] = useState<{ name: string; url: string }[]>([]);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -189,10 +191,18 @@ const PushRecommendationForm = () => {
         description: `${recType.toUpperCase()} recommendation for ${selectedStock.symbol} sent to ${targets.length} client(s).`,
       });
 
-      if (sendWhatsApp && targets.length === 1) {
-        const client = targets[0];
-        const msg = `Hi ${client.full_name}, new ${recType.toUpperCase()} recommendation: ${selectedStock.symbol} at ₹${recPrice}. ${rationale ? `Rationale: ${rationale}` : ""} – Vinstocks`;
-        window.open(`https://wa.me/${client.phone?.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`, "_blank");
+      if (sendWhatsApp && targets.length > 0) {
+        const detail = recType === "sell"
+          ? sellRange ? ` (selling range ₹${sellRange})` : ""
+          : rationale ? `. Rationale: ${rationale}` : "";
+        setWaQueue(
+          targets.map((client) => ({
+            name: client.full_name,
+            url: `https://wa.me/${client.phone?.replace(/\D/g, "")}?text=${encodeURIComponent(
+              `Hi ${client.full_name}, new ${recType.toUpperCase()} recommendation: ${selectedStock.symbol} at ₹${recPrice}${detail} – Vinstocks`
+            )}`,
+          }))
+        );
       }
 
       setSelectedStock(null);
@@ -421,6 +431,31 @@ const PushRecommendationForm = () => {
             <Switch checked={sendWhatsApp} onCheckedChange={setSendWhatsApp} />
           </div>
         </Card>
+
+        <Dialog open={waQueue.length > 0} onOpenChange={(open) => !open && setWaQueue([])}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Send WhatsApp Alerts</DialogTitle>
+            </DialogHeader>
+            <p className="text-xs text-muted-foreground -mt-2">
+              Browsers only allow one popup at a time — click each client to open their pre-filled message.
+            </p>
+            <div className="space-y-2">
+              {waQueue.map((t) => (
+                <Button
+                  key={t.url}
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => window.open(t.url, "_blank")}
+                >
+                  <MessageCircle className="w-4 h-4 mr-2 text-success" />
+                  WhatsApp {t.name}
+                </Button>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <Button type="submit" className="w-full" disabled={!selectedStock || loading}>
           {loading ? (

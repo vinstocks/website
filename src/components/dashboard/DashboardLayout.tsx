@@ -1,14 +1,38 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { LayoutDashboard, Layers, Star, FileText, ScrollText, LogOut, Menu, X, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import logo from "@/assets/logo.png";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [newRecs, setNewRecs] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
   const { profile, signOut } = useAuth();
+
+  useEffect(() => {
+    if (!profile?.id) return;
+    const seenKey = `recs_seen_${profile.id}`;
+    if (location.pathname === "/dashboard/recommendations") {
+      localStorage.setItem(seenKey, new Date().toISOString());
+      setNewRecs(0);
+      return;
+    }
+    const fetchCount = async () => {
+      const seen = localStorage.getItem(seenKey);
+      let query = supabase
+        .from("recommendation_log")
+        .select("id", { count: "exact", head: true })
+        .eq("client_id", profile.id);
+      if (seen) query = query.gt("created_at", seen);
+      const { count } = await query;
+      setNewRecs(count || 0);
+    };
+    fetchCount();
+  }, [profile?.id, location.pathname]);
 
   const starsOnly = profile?.plan === "stars";
   const navItems = [
@@ -77,6 +101,11 @@ const DashboardLayout = () => {
             >
               <item.icon className="w-4 h-4" />
               {item.label}
+              {item.label === "Recommendations" && newRecs > 0 && (
+                <span className="ml-auto min-w-5 h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold flex items-center justify-center">
+                  {newRecs > 9 ? "9+" : newRecs}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>

@@ -55,25 +55,48 @@ Replace per-client Excel workbooks with a web dashboard. Currently each client h
 
 ## Implementation Status
 
-### Part A: UI First (Mock Data) — In Progress
+### Part A: UI First — COMPLETE
 
 | Phase | Status | Description |
 |-------|--------|-------------|
 | A1. Client Dashboard UI | DONE | LiveDashboard, TrancheView, StarsPortfolio, RecommendationLog, ReportsGrid |
-| A2. Admin Panel UI | TODO | AdminOverview, ClientsTable, ClientDetail, CreateClient, PushRecommendation |
-| A3. Login Page UI | DONE | Email/password form with mock auth redirect |
-| A4. Review & Confirm | TODO | User reviews all pages, iterates until approved |
+| A2. Admin Panel UI | DONE | AdminOverview, ClientsTable, ClientDetail, CreateClient, PushRecommendation, ManageTranches, ManageReports |
+| A3. Login Page UI | DONE | Email/password form wired to Supabase auth |
+| A4. Review & Confirm | DONE | Reviewed and iterated with live testing |
 
-### Part B: Backend Integration (Supabase) — Not Started
+### Part B: Backend Integration (Supabase) — COMPLETE (except send-alert)
 
-| Phase | Description |
-|-------|-------------|
-| B1. Foundation | Supabase setup, SQL migration, seed master stocks |
-| B2. Auth | Wire login to Supabase, ProtectedRoute, AdminRoute |
-| B3. Data Hooks | Replace mock data with React Query + Supabase |
-| B4. Edge Functions | create-client, send-alert |
-| B5. Live Prices | Yahoo Finance Edge Function for NSE stock prices |
-| B6. Polish | Loading states, responsive, notifications |
+| Phase | Status | Description |
+|-------|--------|-------------|
+| B1. Foundation | DONE | Supabase project, schema.sql (7 tables + RLS + triggers), 2,220 master stocks seeded |
+| B2. Auth | DONE | Login via Supabase, ProtectedRoute + AdminRoute, AuthProvider |
+| B3. Data Wiring | DONE | All components on live Supabase data; clients edit qty/price inline |
+| B4. Edge Functions | DONE | `create-client` deployed (send-alert email deferred) |
+| B5. Live Prices | DONE | `update-prices` function — Yahoo Finance NSE quotes, 5-min cache |
+| B6. Polish | DONE | Multi-client WhatsApp alerts, new-recommendation badge, responsive tables |
+
+### Additional Features (beyond original plan)
+- **Market ticker**: `market-ticker` edge function — daily NIFTY 50 top gainers/losers on public pages (cached per IST day in `ticker_cache`)
+- **Stars-only plan**: clients can subscribe to Stars without Elite/Prime (`plan='stars'`)
+- **Sell recommendations**: update stock status to SELL, carry selling range + % allocation to sell
+- **Multi-client push**: checkbox selection of any client combination
+- **Recommendation history**: separate Elite/Prime and Stars sections, each with All Buy / All Sell tabs
+- **Admin stock removal**: trash buttons across Live Dashboard/Tranches/Stars, cascades to holdings + recommendation log
+
+### Migrations (run in Supabase SQL editor — all applied)
+```
+supabase/migrations/001_stars_only_plan.sql          — allow plan='stars'
+supabase/migrations/002_sell_recommendation_fields.sql — sell_range, sell_allocation_pct
+supabase/migrations/003_price_updated_at.sql         — price cache timestamp
+supabase/migrations/004_ticker_cache.sql             — market ticker daily cache
+```
+
+### Deployed Edge Functions
+```
+create-client   — admin creates client accounts (service role)
+update-prices   — live CMPs for a client's portfolio, 5-min cache
+market-ticker   — public daily NIFTY 50 top gainers/losers
+```
 
 ---
 
@@ -82,7 +105,9 @@ Replace per-client Excel workbooks with a web dashboard. Currently each client h
 ### New Files
 ```
 src/lib/types.ts                          — TypeScript interfaces for all data structures
-src/lib/mock-data.ts                      — Hardcoded mock data matching Excel structure
+src/lib/supabase.ts                       — Supabase client
+src/lib/auth.tsx                          — AuthProvider context + useAuth()
+src/lib/prices.ts                         — refreshLivePrices() helper (update-prices function)
 src/pages/Login.tsx                       — Login page with email/password form
 src/components/dashboard/
   DashboardLayout.tsx                     — Sidebar + Outlet layout
