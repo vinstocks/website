@@ -90,7 +90,7 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
               href="/login"
               className="text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              Client Login
+              Client Dashboard
             </a>
             <a
               href={isPreIPOPage ? "/#pricing" : "#pricing"}
@@ -160,7 +160,7 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
               className="block py-3 text-muted-foreground hover:text-foreground transition-colors font-medium"
               onClick={() => setIsOpen(false)}
             >
-              Client Login
+              Client Dashboard
             </a>
             <a
               href={isPreIPOPage ? "/#pricing" : "#pricing"}
