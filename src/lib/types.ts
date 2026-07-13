@@ -145,6 +145,20 @@ export interface StarsHolding {
   holding_id: string;
 }
 
+export interface Sale {
+  id: string;
+  client_id: string;
+  stock_id: number;
+  symbol: string;
+  company_name: string;
+  plan_type: "elite_prime" | "stars";
+  quantity: number;
+  buy_price: number;
+  sell_price: number;
+  sell_date: string;
+  pnl: number;
+}
+
 export interface Alert {
   id: string;
   client_id: string;

@@ -232,6 +232,7 @@ const RecommendationLog = ({
   const starsRecs = recs.filter((r) => r.plan_type === "stars");
   const showElitePrime = effectivePlan === "elite" || effectivePlan === "prime" || epRecs.length > 0;
   const showStars = !!effectiveHasStars || starsRecs.length > 0;
+  const epLabel = effectivePlan === "elite" ? "Elite" : effectivePlan === "prime" ? "Prime" : "Elite / Prime";
 
   return (
     <div className="space-y-6">
@@ -245,7 +246,7 @@ const RecommendationLog = ({
       {showElitePrime && showStars ? (
         <Tabs defaultValue="elite_prime">
           <TabsList>
-            <TabsTrigger value="elite_prime" className="text-xs">Elite / Prime</TabsTrigger>
+            <TabsTrigger value="elite_prime" className="text-xs">{epLabel}</TabsTrigger>
             <TabsTrigger value="stars" className="text-xs">Stars</TabsTrigger>
           </TabsList>
           <TabsContent value="elite_prime" className="mt-4">

@@ -23,6 +23,7 @@ const PushRecommendationForm = () => {
   const [recPrice, setRecPrice] = useState("");
   const [targetType, setTargetType] = useState<"client" | "plan">("client");
   const [selectedClientIds, setSelectedClientIds] = useState<string[]>([]);
+  const [clientFilter, setClientFilter] = useState("");
   const [selectedPlan, setSelectedPlan] = useState("");
   const [isStars, setIsStars] = useState(false);
   const [buyingRange, setBuyingRange] = useState("");
@@ -383,27 +384,75 @@ const PushRecommendationForm = () => {
 
             {targetType === "client" ? (
               <div className="space-y-2">
-                <Label>Clients ({selectedClientIds.length} selected)</Label>
-                <div className="border border-border rounded-lg max-h-44 overflow-y-auto divide-y divide-border">
-                  {clients.map((c) => (
-                    <label
-                      key={c.id}
-                      className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-muted/50 transition-colors"
+                <div className="flex items-center justify-between">
+                  <Label>Clients ({selectedClientIds.length} selected)</Label>
+                  {selectedClientIds.length > 0 && (
+                    <button
+                      type="button"
+                      className="text-xs text-muted-foreground hover:text-foreground underline"
+                      onClick={() => setSelectedClientIds([])}
                     >
-                      <Checkbox
-                        checked={selectedClientIds.includes(c.id)}
-                        onCheckedChange={(checked) =>
-                          setSelectedClientIds((prev) =>
-                            checked ? [...prev, c.id] : prev.filter((id) => id !== c.id)
-                          )
-                        }
-                      />
-                      <span className="text-sm">
-                        {c.full_name} <span className="text-xs text-muted-foreground capitalize">({c.plan}{c.has_stars && c.plan !== "stars" ? " + stars" : ""})</span>
-                      </span>
-                    </label>
-                  ))}
+                      Clear
+                    </button>
+                  )}
                 </div>
+                <Input
+                  placeholder="Search clients by name or email..."
+                  value={clientFilter}
+                  onChange={(e) => setClientFilter(e.target.value)}
+                />
+                {(() => {
+                  const filtered = clients.filter(
+                    (c) =>
+                      !clientFilter ||
+                      c.full_name.toLowerCase().includes(clientFilter.toLowerCase()) ||
+                      c.email.toLowerCase().includes(clientFilter.toLowerCase())
+                  );
+                  const allFilteredSelected =
+                    filtered.length > 0 && filtered.every((c) => selectedClientIds.includes(c.id));
+                  return (
+                    <div className="border border-border rounded-lg max-h-56 overflow-y-auto divide-y divide-border">
+                      {filtered.length > 1 && (
+                        <label className="flex items-center gap-2.5 px-3 py-2 cursor-pointer bg-muted/30 hover:bg-muted/50 transition-colors">
+                          <Checkbox
+                            checked={allFilteredSelected}
+                            onCheckedChange={(checked) =>
+                              setSelectedClientIds((prev) =>
+                                checked
+                                  ? [...new Set([...prev, ...filtered.map((c) => c.id)])]
+                                  : prev.filter((id) => !filtered.some((c) => c.id === id))
+                              )
+                            }
+                          />
+                          <span className="text-sm font-medium">
+                            Select all{clientFilter ? " matching" : ""} ({filtered.length})
+                          </span>
+                        </label>
+                      )}
+                      {filtered.map((c) => (
+                        <label
+                          key={c.id}
+                          className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-muted/50 transition-colors"
+                        >
+                          <Checkbox
+                            checked={selectedClientIds.includes(c.id)}
+                            onCheckedChange={(checked) =>
+                              setSelectedClientIds((prev) =>
+                                checked ? [...prev, c.id] : prev.filter((id) => id !== c.id)
+                              )
+                            }
+                          />
+                          <span className="text-sm">
+                            {c.full_name} <span className="text-xs text-muted-foreground capitalize">({c.plan}{c.has_stars && c.plan !== "stars" ? " + stars" : ""})</span>
+                          </span>
+                        </label>
+                      ))}
+                      {filtered.length === 0 && (
+                        <p className="px-3 py-4 text-sm text-muted-foreground text-center">No clients match</p>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             ) : (
               <div className="space-y-2">

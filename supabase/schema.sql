@@ -94,7 +94,21 @@ create table public.recommendation_log (
   created_at timestamptz default now()
 );
 
--- 7. Alerts (notification log)
+-- 7. Sales (realized P&L — one row per partial/full exit)
+create table public.sales (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.profiles(id) on delete cascade,
+  stock_id integer not null references public.master_stocks(id),
+  plan_type text not null default 'elite_prime' check (plan_type in ('elite_prime', 'stars')),
+  quantity integer not null check (quantity > 0),
+  buy_price numeric(12,2) not null,
+  sell_price numeric(12,2) not null,
+  sell_date date default current_date,
+  pnl numeric(14,2) not null,
+  created_at timestamptz default now()
+);
+
+-- 8. Alerts (notification log)
 create table public.alerts (
   id uuid primary key default gen_random_uuid(),
   client_id uuid not null references public.profiles(id) on delete cascade,
@@ -140,6 +154,7 @@ alter table public.portfolio_stocks enable row level security;
 alter table public.tranches enable row level security;
 alter table public.holdings enable row level security;
 alter table public.recommendation_log enable row level security;
+alter table public.sales enable row level security;
 alter table public.alerts enable row level security;
 
 -- Helper: check if current user is admin
@@ -223,6 +238,19 @@ create policy "Users can read own recommendations"
 
 create policy "Admins can manage recommendations"
   on public.recommendation_log for all
+  using (public.is_admin());
+
+-- SALES
+create policy "Users can read own sales"
+  on public.sales for select
+  using (client_id = auth.uid() or public.is_admin());
+
+create policy "Clients can record own sales"
+  on public.sales for insert
+  with check (client_id = auth.uid() or public.is_admin());
+
+create policy "Admins can manage sales"
+  on public.sales for all
   using (public.is_admin());
 
 -- ALERTS

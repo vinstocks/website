@@ -1,7 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Star, Mail, Phone, Calendar, Loader2, Pencil } from "lucide-react";
+import { ArrowLeft, Star, Mail, Phone, Calendar, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +17,7 @@ import ManageReports from "@/components/admin/ManageReports";
 import EditClientDialog from "@/components/admin/EditClientDialog";
 import { formatCurrency } from "@/lib/utils/format";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/components/ui/use-toast";
 import type { Profile } from "@/lib/types";
 
 const ClientDetail = () => {
@@ -23,7 +27,31 @@ const ClientDetail = () => {
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirmName, setDeleteConfirmName] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const { toast } = useToast();
   const handleStockRemoved = () => setRefreshKey((k) => k + 1);
+
+  const nameMatches =
+    !!client && deleteConfirmName.trim().toLowerCase() === client.full_name.trim().toLowerCase();
+
+  const handleDeleteClient = async () => {
+    if (!client || !nameMatches) return;
+    setDeleting(true);
+    try {
+      const res = await supabase.functions.invoke("delete-client", {
+        body: { client_id: client.id },
+      });
+      if (res.error) throw new Error(res.error.message);
+      if (res.data?.error) throw new Error(res.data.error);
+      toast({ title: "Client removed", description: `${client.full_name} and all their data were deleted.` });
+      navigate("/admin/clients");
+    } catch (err: any) {
+      toast({ title: "Failed to remove client", description: err.message, variant: "destructive" });
+      setDeleting(false);
+    }
+  };
 
   const fetchClient = useCallback(async () => {
     if (!id) return;
@@ -83,7 +111,62 @@ const ClientDetail = () => {
           <Pencil className="w-3.5 h-3.5 mr-1.5" />
           Edit Details
         </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+          onClick={() => {
+            setDeleteConfirmName("");
+            setDeleteOpen(true);
+          }}
+        >
+          <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+          Remove Client
+        </Button>
       </div>
+
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Remove Client</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            This permanently deletes <span className="font-semibold text-foreground">{client.full_name}</span>'s
+            account, portfolio, holdings, recommendations, sales history, and login access.
+            <span className="font-semibold text-foreground"> This cannot be undone.</span>
+          </p>
+          <div className="space-y-2">
+            <Label htmlFor="confirm-name">Type the client's name to confirm</Label>
+            <Input
+              id="confirm-name"
+              placeholder={client.full_name}
+              value={deleteConfirmName}
+              onChange={(e) => setDeleteConfirmName(e.target.value)}
+              autoComplete="off"
+            />
+          </div>
+          <div className="flex gap-3 pt-1">
+            <Button variant="outline" className="flex-1" onClick={() => setDeleteOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              className="flex-1"
+              disabled={!nameMatches || deleting}
+              onClick={handleDeleteClient}
+            >
+              {deleting ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Deleting...
+                </span>
+              ) : (
+                "Delete Permanently"
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <EditClientDialog
         client={client}

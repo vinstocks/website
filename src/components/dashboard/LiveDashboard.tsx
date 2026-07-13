@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Trash2, Banknote } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import PortfolioSummary from "./PortfolioSummary";
+import RecordSaleDialog, { SaleTarget } from "./RecordSaleDialog";
+import RealizedPnlTable from "./RealizedPnlTable";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import { supabase } from "@/lib/supabase";
 import { refreshLivePrices } from "@/lib/prices";
 import { useAuth } from "@/lib/auth";
-import type { LiveDashboardRow } from "@/lib/types";
+import type { LiveDashboardRow, Sale } from "@/lib/types";
 
 const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStockRemoved?: () => void }) => {
   const { user, profile } = useAuth();
@@ -16,12 +18,31 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
   const targetId = clientId || user?.id;
   const isAdmin = !!clientId && profile?.role === "admin";
   const [rows, setRows] = useState<LiveDashboardRow[]>([]);
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [saleTarget, setSaleTarget] = useState<SaleTarget | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!targetId) return;
     const fetch = async () => {
       await refreshLivePrices(targetId);
+
+      const { data: salesData } = await supabase
+        .from("sales")
+        .select("*, master_stocks(symbol, company_name)")
+        .eq("client_id", targetId)
+        .eq("plan_type", "elite_prime")
+        .order("sell_date", { ascending: false });
+      setSales(
+        (salesData || []).map((s: any) => ({
+          ...s,
+          symbol: s.master_stocks?.symbol || "",
+          company_name: s.master_stocks?.company_name || "",
+          pnl: Number(s.pnl),
+        }))
+      );
+
       const { data: psData } = await supabase
         .from("portfolio_stocks")
         .select("id, stock_id, current_price, previous_price, plan_type, master_stocks(symbol, company_name)")
@@ -75,7 +96,7 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
       setLoading(false);
     };
     fetch();
-  }, [targetId]);
+  }, [targetId, reloadKey]);
 
   if (loading) {
     return (
@@ -102,6 +123,7 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
   const currentValue = rows.reduce((s, r) => s + r.current_value, 0);
   const totalPnl = currentValue - totalInvestment;
   const pnlPct = totalInvestment > 0 ? (totalPnl / totalInvestment) * 100 : 0;
+  const realizedPnl = sales.reduce((s, x) => s + x.pnl, 0);
 
   return (
     <div className="space-y-6">
@@ -110,7 +132,17 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
         currentValue={currentValue}
         totalPnl={totalPnl}
         pnlPct={pnlPct}
+        realizedPnl={realizedPnl}
       />
+
+      {targetId && (
+        <RecordSaleDialog
+          clientId={targetId}
+          target={saleTarget}
+          onOpenChange={(open) => !open && setSaleTarget(null)}
+          onRecorded={() => setReloadKey((k) => k + 1)}
+        />
+      )}
 
       <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="p-4 border-b border-border">
@@ -130,13 +162,14 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
                 <TableHead className="font-semibold text-xs text-right">CMP</TableHead>
                 <TableHead className="font-semibold text-xs text-right">P&L</TableHead>
                 <TableHead className="font-semibold text-xs text-right">P&L %</TableHead>
+                <TableHead className="font-semibold text-xs w-10" />
                 {isAdmin && <TableHead className="font-semibold text-xs w-10" />}
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={isAdmin ? 10 : 9} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={isAdmin ? 11 : 10} className="text-center py-8 text-muted-foreground text-sm">
                     No stocks in your portfolio yet
                   </TableCell>
                 </TableRow>
@@ -172,6 +205,28 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
                           {isProfit ? "+" : ""}{row.pnl_pct.toFixed(2)}%
                         </span>
                       </TableCell>
+                      <TableCell>
+                        {row.total_qty > 0 && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-muted-foreground hover:text-primary"
+                            title="Record sale"
+                            onClick={() =>
+                              setSaleTarget({
+                                portfolio_stock_id: row.portfolio_stock_id,
+                                stock_id: row.stock_id,
+                                symbol: row.symbol,
+                                plan_type: "elite_prime",
+                                total_qty: row.total_qty,
+                                avg_buy_price: row.avg_buy_price,
+                              })
+                            }
+                          >
+                            <Banknote className="w-3.5 h-3.5" />
+                          </Button>
+                        )}
+                      </TableCell>
                       {isAdmin && (
                         <TableCell>
                           <Button
@@ -192,6 +247,8 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
           </Table>
         </div>
       </div>
+
+      <RealizedPnlTable sales={sales} />
     </div>
   );
 };

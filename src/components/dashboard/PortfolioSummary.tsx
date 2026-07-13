@@ -17,6 +17,7 @@ interface PortfolioSummaryProps {
   pnlPct: number;
   cagr?: number;
   allocatedAmount?: number;
+  realizedPnl?: number;
 }
 
 const PortfolioSummary = ({
@@ -26,6 +27,7 @@ const PortfolioSummary = ({
   pnlPct,
   cagr,
   allocatedAmount,
+  realizedPnl,
 }: PortfolioSummaryProps) => {
   const isProfit = totalPnl >= 0;
 
@@ -54,6 +56,16 @@ const PortfolioSummary = ({
             value: `${cagr.toFixed(2)}%`,
             icon: BarChart3,
             color: cagr >= 0 ? "text-success" : "text-destructive",
+          },
+        ]
+      : []),
+    ...(realizedPnl !== undefined && realizedPnl !== 0
+      ? [
+          {
+            label: "Realized P&L",
+            value: `${realizedPnl >= 0 ? "+" : ""}${formatCurrency(realizedPnl)}`,
+            icon: realizedPnl >= 0 ? TrendingUp : TrendingDown,
+            color: realizedPnl >= 0 ? "text-success" : "text-destructive",
           },
         ]
       : []),
