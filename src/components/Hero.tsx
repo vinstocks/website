@@ -85,8 +85,11 @@ const Hero = () => {
               assumed.
             </p>
 
-            <p className="text-2xl md:text-3xl font-bold text-gradient tracking-wide max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-500">
+            <p className="text-2xl md:text-3xl font-bold text-gradient tracking-wide max-w-2xl mx-auto mb-2 animate-fade-in-up animation-delay-500">
               SEBI REGISTERED
+            </p>
+            <p className="text-lg md:text-xl text-muted-foreground font-medium mb-10 animate-fade-in-up animation-delay-500">
+              Reg. No: INA000021766
             </p>
 
 

@@ -13,9 +13,8 @@ const AboutUs = () => {
       header: "Vinstocks Wealth",
       tiles: [
         "Comprehensive investment solutions for retail and high‑net‑worth investors",
-        "Diversified portfolio of 18–25 equities",
+        "Diversified portfolio of 12-15 equities",
         "Disciplined buy, hold, and sell recommendations delivered with precision",
-        "Certified Relationship Manager"
       ]
       
     },
@@ -24,7 +23,6 @@ const AboutUs = () => {
       image: car_lap,
       header: "Vinstocks Wealth",
       tiles: [
-        "Financial Planning",
         "AI-powered stock screening and analysis",
         "Comprehensive portfolio tracking and reporting",
         "Portfolio Rebalancing as and when required",

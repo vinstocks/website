@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 interface NavbarProps {
@@ -9,10 +10,14 @@ interface NavbarProps {
 const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+
+  const hash = (anchor: string) => isHomePage ? anchor : `/${anchor}`;
 
   const servicesItems = [
-    { name: "Pre-IPO", href: "/pre-ipo" },
-    { name: "Investment Advisory", href: "#pricing" },
+    { name: "Unlisted Shares", href: "/pre-ipo" },
+    { name: "Investment Advisory", href: hash("#pricing") },
   ];
 
   const navLinks = isPreIPOPage
@@ -21,8 +26,8 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
       ]
     : [
         { name: "SIP Calculator", href: "/sip-calculator" },
-        { name: "About Us", href: "#about" },
-        { name: "Contact", href: "#contact" },
+        { name: "About Us", href: hash("#about") },
+        { name: "Contact", href: hash("#contact") },
       ];
 
   return (
@@ -93,7 +98,7 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
               Client Dashboard
             </a>
             <a
-              href={isPreIPOPage ? "/#pricing" : "#pricing"}
+              href={hash("#pricing")}
               className="px-5 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold hover:opacity-90 transition-opacity text-sm"
             >
               Get Started
@@ -163,7 +168,7 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
               Client Dashboard
             </a>
             <a
-              href={isPreIPOPage ? "/#pricing" : "#pricing"}
+              href={hash("#pricing")}
               className="block mt-4 px-6 py-3 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold text-center"
               onClick={() => setIsOpen(false)}
             >

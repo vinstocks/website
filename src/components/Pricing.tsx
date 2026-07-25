@@ -10,13 +10,18 @@ const plans = [
     period: "Yearly",
     features: [
       "Capital > 25 lacs",
-      "Customized Portfolio",
-      "12-18 Stocks Portfolio",
-      "7-8 High Growth Sectors",
-      "Timely Entry & Exit",
+      "Time Horizon 5 Years",
+      "12-15 Emerging Stocks",
+      "1/2 Monthly Midterm Recommendations - 1 Year",
+      "Access to Research Experts",
+      "ETF Basket",
+      "Well Timed Entry & Exit",
       "Allocation of Stocks",
-      "Research Report",
-      "Personal Relationship Manager",
+      "Research Reports",
+      "Access to Unlisted Shares",
+      "Existing Portfolio Review",
+      "Regular Market/IPO Updates",
+      "Alerts via WhatsApp, Email, Calls",
     ],
     popular: true,
   },
@@ -26,10 +31,9 @@ const plans = [
     price: "₹20,000",
     period: "Yearly",
     features: [
-      "Capital 3 - 25 lacs",
-      "Personalized Portfolio",
-      "12-18 Stocks Portfolio",
-      "7-8 High Growth Sectors",
+      "Capital 5 - 20 lacs",
+      "Time Horizon 3 Years",
+      "15-18 High Growth Stocks Portfolio",
       "Timely Entry & Exit",
       "Portfolio Review",
     ],
@@ -41,24 +45,11 @@ const plans = [
     price: "₹16,000",
     period: "Yearly",
     features: [
-      "Midterm recommendations",
-      "1 to 2 Stocks a month",
+      "Midterm Recommendations",
+      "1/2 Stocks a month",
+      "Rerating Opportunitistic Stocks",
       "Time Horizon 3-8 Months",
       "Timely Entry & Exit",
-      "Portfolio Review",
-    ],
-    popular: false,
-  },
-  {
-    name: "Portfolio Checkup",
-    letter: "+",
-    price: "₹2000",
-    period: "-",
-    features: [
-      "Equity and Mutual Funds",
-      "Detailed Review of Existing Holdings",
-      "Exits with Proper Rationale",
-      "Levels to Exit and Average",
     ],
     popular: false,
   },
@@ -85,7 +76,7 @@ const Pricing = () => {
         </div>
 
         {/* Main Plans */}
-        <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
           {plans.map((plan) => (
             <div
               key={plan.name}
