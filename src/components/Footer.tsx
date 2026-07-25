@@ -99,15 +99,6 @@ const Footer = () => {
               </a>
             </div>
 
-            <a
-              href="https://wa.me/917977524553"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-success text-white font-semibold hover:opacity-90 transition-opacity"
-            >
-              <WhatsAppIcon className="w-5 h-5" />
-              Chat on WhatsApp
-            </a>
           </div>
         </div>
       </div>

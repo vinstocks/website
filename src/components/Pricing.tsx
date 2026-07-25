@@ -1,6 +1,7 @@
 import { Check, Star, X } from "lucide-react";
 import { useState } from "react";
 import CoinStack from "./illustrations/CoinStack";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const plans = [
   {
@@ -57,6 +58,8 @@ const plans = [
 
 const Pricing = () => {
   const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
+  const { ref: headerRef, isVisible: headerVisible } = useScrollReveal();
+  const { ref: cardsRef, isVisible: cardsVisible } = useScrollReveal(0.1);
 
   return (
     <section id="pricing" className="py-24 relative">
@@ -64,26 +67,33 @@ const Pricing = () => {
       <div className="absolute right-10 top-20 hidden xl:block opacity-25">
         <CoinStack className="w-28 h-36" />
       </div>
-      
+
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
+        <div
+          ref={headerRef}
+          className={`text-center mb-16 reveal ${headerVisible ? "visible" : ""}`}
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 heading-serif">
             Choose Your <span className="text-gradient">Plan</span>
           </h2>
+          <div className="section-divider mx-auto mt-4 mb-6" />
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Enjoy exclusive benefits by subscribing to any of our plans
           </p>
         </div>
 
         {/* Main Plans */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
+        <div
+          ref={cardsRef}
+          className={`grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12 stagger-children ${cardsVisible ? "visible" : ""}`}
+        >
           {plans.map((plan) => (
             <div
               key={plan.name}
               onClick={() => setSelectedPlan(plan)}
-              className={`relative p-6 rounded-2xl border transition-all duration-300 hover:scale-105 flex flex-col h-full cursor-pointer ${
+              className={`reveal-card ${cardsVisible ? "visible" : ""} relative p-6 rounded-2xl border flex flex-col h-full cursor-pointer card-lift ${
                 plan.popular
-                  ? "border-primary bg-gradient-to-b from-primary/10 to-transparent glow-primary"
+                  ? "border-primary bg-gradient-to-b from-primary/10 to-transparent glow-pulse"
                   : "border-green-400 bg-gradient-to-b from-green-50 to-transparent"
               }`}
             >

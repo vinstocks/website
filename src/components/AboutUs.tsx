@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import car_mob from "@/assets/ip1.png";
 import car_lap from "@/assets/ip2.png";
 
 const AboutUs = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { ref: headerRef, isVisible: headerVisible } = useScrollReveal();
+  const { ref: carouselRef, isVisible: carouselVisible } = useScrollReveal(0.1);
 
   const slides = [
     {
@@ -51,17 +54,24 @@ const AboutUs = () => {
     <section id="about" className="py-20 bg-gradient-to-b from-background to-muted/30 relative overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            About <span className="text-primary">Our Platform</span>
+        <div
+          ref={headerRef}
+          className={`text-center mb-16 reveal ${headerVisible ? "visible" : ""}`}
+        >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 heading-serif">
+            Why <span className="text-primary">Vinstocks</span>
           </h2>
+          <div className="section-divider mx-auto mt-4 mb-6" />
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Discover how we help investors make informed decisions with cutting-edge technology and expert insights
           </p>
         </div>
 
         {/* Carousel Container */}
-        <div className="relative max-w-7xl mx-auto xl:px-16">
+        <div
+          ref={carouselRef}
+          className={`relative max-w-7xl mx-auto xl:px-16 reveal ${carouselVisible ? "visible" : ""}`}
+        >
           {/* Navigation Buttons */}
           <button
             onClick={handlePrevious}

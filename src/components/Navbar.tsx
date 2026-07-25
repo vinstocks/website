@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
@@ -10,10 +10,17 @@ interface NavbarProps {
 const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
   const hash = (anchor: string) => isHomePage ? anchor : `/${anchor}`;
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const servicesItems = [
     { name: "Unlisted Shares", href: "/pre-ipo" },
@@ -31,7 +38,7 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
       ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+    <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b transition-all duration-300 ${scrolled ? "bg-background/70 border-border shadow-lg shadow-black/5" : "bg-background/40 border-transparent"}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}

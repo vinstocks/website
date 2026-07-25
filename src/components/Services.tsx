@@ -1,5 +1,5 @@
 import { Zap, Gem, FileSearch } from "lucide-react";
-import ChartArrow from "./illustrations/ChartArrow";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const services = [
   {
@@ -23,33 +23,41 @@ const services = [
 ];
 
 const Services = () => {
+  const { ref: headerRef, isVisible: headerVisible } = useScrollReveal();
+  const { ref: cardsRef, isVisible: cardsVisible } = useScrollReveal(0.1);
+
   return (
     <section className="py-24 relative bg-muted/30">
-      
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            What will you <span className="text-gradient">Get?</span>
+        <div
+          ref={headerRef}
+          className={`text-center mb-16 reveal ${headerVisible ? "visible" : ""}`}
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 heading-serif">
+            Our <span className="text-gradient">Services</span>
           </h2>
+          <div className="section-divider mx-auto mt-4 mb-6" />
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Comprehensive investment solutions tailored for the modern investor
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {services.map((service, index) => (
+        <div
+          ref={cardsRef}
+          className={`grid md:grid-cols-3 gap-8 max-w-5xl mx-auto stagger-children ${cardsVisible ? "visible" : ""}`}
+        >
+          {services.map((service) => (
             <div
               key={service.title}
-              className="group relative overflow-hidden"
+              className={`reveal-card ${cardsVisible ? "visible" : ""}`}
             >
-              <div className="p-8 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-500 h-full shadow-sm">
-                {/* Animated gradient border on hover */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${service.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-                
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-r ${service.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+              <div className="group relative overflow-hidden p-8 rounded-2xl bg-card border border-border hover:border-primary/50 h-full card-lift">
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${service.gradient} opacity-0 group-hover:opacity-[0.07] transition-opacity duration-500`} />
+
+                <div className={`icon-pop w-14 h-14 rounded-xl bg-gradient-to-r ${service.gradient} flex items-center justify-center mb-6`}>
                   <service.icon className="w-7 h-7 text-white" />
                 </div>
-                
+
                 <h3 className="text-xl font-bold mb-3 text-foreground">{service.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{service.description}</p>
               </div>

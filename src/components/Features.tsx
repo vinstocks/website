@@ -1,5 +1,6 @@
-import { Brain, BarChart3, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Brain, BarChart3, Clock, Shield, Eye, Sliders, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const features = [
   {
@@ -24,21 +25,21 @@ const features = [
     color: "success",
   },
   {
-    icon: BarChart3,
+    icon: Sliders,
     title: "Qualitative & Quantitative Parameters",
     description:
       "Our framework blends measurable data with contextual insights, ensuring decisions are both precise and meaningful.",
     color: "success",
   },
   {
-    icon: Brain,
+    icon: Shield,
     title: "Risk Management",
     description:
       "Sophisticated risk assessment tools help you protect your portfolio and make informed decisions.",
     color: "primary",
   },
   {
-    icon: Clock,
+    icon: Eye,
     title: "24/7 Market Monitoring",
     description:
       "Continuous market surveillance ensures you never miss critical opportunities or threats.",
@@ -50,15 +51,15 @@ const Features = () => {
   const [index, setIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const { ref: headerRef, isVisible: headerVisible } = useScrollReveal();
+  const { ref: carouselRef, isVisible: carouselVisible } = useScrollReveal(0.1);
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -66,12 +67,10 @@ const Features = () => {
     const interval = setInterval(() => {
       setIsTransitioning(true);
       setIndex((prev) => prev + 1);
-    }, 4000); // Auto-scroll every 4 seconds
-
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
-  // Reset to beginning when reaching the end
   useEffect(() => {
     if (index >= features.length) {
       setTimeout(() => {
@@ -104,20 +103,33 @@ const Features = () => {
     }
   };
 
+  const iconColorClass = (color: string) =>
+    color === "primary"
+      ? "bg-primary/15 text-primary"
+      : color === "secondary"
+      ? "bg-secondary/15 text-secondary"
+      : "bg-success/15 text-success";
+
   return (
     <section id="services" className="py-24 relative">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            How do we <span className="text-gradient">do?</span>
+        <div
+          ref={headerRef}
+          className={`text-center mb-16 reveal ${headerVisible ? "visible" : ""}`}
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 heading-serif">
+            Our <span className="text-gradient">Approach</span>
           </h2>
+          <div className="section-divider mx-auto mt-4 mb-6" />
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Our data-driven approach combines cutting-edge technology with fundamental analysis
           </p>
         </div>
 
-        <div className="relative max-w-7xl mx-auto xl:px-16">
-          {/* Navigation Buttons */}
+        <div
+          ref={carouselRef}
+          className={`relative max-w-7xl mx-auto xl:px-16 reveal ${carouselVisible ? "visible" : ""}`}
+        >
           <button
             onClick={prevSlide}
             className="absolute left-2 xl:-left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full bg-card border-2 border-primary shadow-lg flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300"
@@ -134,38 +146,27 @@ const Features = () => {
             <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
           </button>
 
-          {/* Cards Container */}
           <div className="overflow-hidden rounded-2xl">
             <div
-              className="flex"
-              style={{ 
-                transform: isMobile 
-                  ? `translateX(-${index * 100}%)` 
+              className="flex py-2"
+              style={{
+                transform: isMobile
+                  ? `translateX(-${index * 100}%)`
                   : `translateX(-${index * (100 / 3)}%)`,
                 transition: isTransitioning ? 'transform 500ms ease-in-out' : 'none'
               }}
             >
-              {/* Show features + first 3 for seamless loop */}
               {[...features, ...features.slice(0, 3)].map((feature, i) => (
                 <div
                   key={i}
                   className="w-full md:w-1/3 flex-shrink-0 px-2 md:px-4"
                 >
-                  <div className="group relative p-8 rounded-2xl card-gradient border border-border hover:border-primary/50 transition-all duration-300 h-full flex flex-col">
-                    <div
-                      className={`w-16 h-16 rounded-xl flex items-center justify-center mb-6 ${
-                        feature.color === "primary"
-                          ? "bg-primary/15 text-primary"
-                          : feature.color === "secondary"
-                          ? "bg-secondary/15 text-secondary"
-                          : "bg-success/15 text-success"
-                      }`}
-                    >
+                  <div className="group relative p-8 rounded-2xl card-gradient border border-border hover:border-primary/50 h-full flex flex-col card-lift">
+                    <div className={`icon-pop w-16 h-16 rounded-xl flex items-center justify-center mb-6 ${iconColorClass(feature.color)}`}>
                       <feature.icon className="w-8 h-8" />
                     </div>
                     <h3 className="text-xl font-bold mb-3 text-foreground">{feature.title}</h3>
                     <p className="text-muted-foreground flex-grow">{feature.description}</p>
-
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
                   </div>
                 </div>
@@ -173,7 +174,6 @@ const Features = () => {
             </div>
           </div>
 
-          {/* Dots Indicator - Show on mobile only since desktop shows 3 cards */}
           <div className="flex md:hidden justify-center gap-3 mt-8">
             {features.map((_, i) => (
               <button
