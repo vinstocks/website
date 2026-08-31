@@ -62,35 +62,42 @@ const RecordSaleDialog = ({ clientId, target, onOpenChange, onRecorded }: Record
     }
     setLoading(true);
     try {
-      const { error: saleError } = await supabase.from("sales").insert({
-        client_id: clientId,
-        stock_id: target.stock_id,
-        plan_type: target.plan_type,
-        quantity: qtyNum,
-        buy_price: target.avg_buy_price,
-        sell_price: priceNum,
-        sell_date: date,
-        pnl,
-      });
-      if (saleError) throw new Error(saleError.message);
-
-      // Reduce holdings, oldest tranche first (Stars has a single tranche-less holding)
+      // Fetch holdings with buy prices for accurate FIFO P&L
       const { data: holdings } = await supabase
         .from("holdings")
-        .select("id, quantity, tranches(tranche_number)")
+        .select("id, quantity, avg_buy_price, tranches(tranche_number)")
         .eq("portfolio_stock_id", target.portfolio_stock_id)
         .gt("quantity", 0);
 
       const sorted = (holdings || []).sort(
         (a: any, b: any) => (a.tranches?.tranche_number ?? 0) - (b.tranches?.tranche_number ?? 0)
       );
+
+      // Calculate actual FIFO P&L and deduct from oldest tranche first
       let remaining = qtyNum;
+      let actualCost = 0;
       for (const h of sorted) {
         if (remaining <= 0) break;
         const take = Math.min(h.quantity, remaining);
+        actualCost += take * h.avg_buy_price;
         await supabase.from("holdings").update({ quantity: h.quantity - take }).eq("id", h.id);
         remaining -= take;
       }
+
+      const fifoBuyPrice = qtyNum > 0 ? actualCost / qtyNum : 0;
+      const fifoPnl = qtyNum * priceNum - actualCost;
+
+      const { error: saleError } = await supabase.from("sales").insert({
+        client_id: clientId,
+        stock_id: target.stock_id,
+        plan_type: target.plan_type,
+        quantity: qtyNum,
+        buy_price: fifoBuyPrice,
+        sell_price: priceNum,
+        sell_date: date,
+        pnl: fifoPnl,
+      });
+      if (saleError) throw new Error(saleError.message);
 
       // Fill result + running P&L on the latest sell recommendation, if any.
       // Clients lack update rights on recommendation_log — ignore failures.
@@ -104,16 +111,16 @@ const RecordSaleDialog = ({ clientId, target, onOpenChange, onRecorded }: Record
         .limit(1)
         .maybeSingle();
       if (sellRec) {
-        const result = isFullExit ? (pnl < 0 ? "Loss" : "Full Exit") : "Partial Booking";
+        const result = isFullExit ? (fifoPnl < 0 ? "Loss" : "Full Exit") : "Partial Booking";
         await supabase
           .from("recommendation_log")
-          .update({ result, pnl_amount: (sellRec.pnl_amount || 0) + pnl, sell_price: priceNum })
+          .update({ result, pnl_amount: (sellRec.pnl_amount || 0) + fifoPnl, sell_price: priceNum })
           .eq("id", sellRec.id);
       }
 
       toast({
         title: `Sale recorded: ${target.symbol}`,
-        description: `${qtyNum} shares at ₹${priceNum} — realized P&L ${pnl >= 0 ? "+" : ""}${formatCurrency(pnl)}`,
+        description: `${qtyNum} shares at ₹${priceNum} — realized P&L ${fifoPnl >= 0 ? "+" : ""}${formatCurrency(fifoPnl)}`,
       });
       onOpenChange(false);
       onRecorded?.();
