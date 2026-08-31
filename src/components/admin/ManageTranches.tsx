@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Loader2, Trash2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,7 @@ const ManageTranches = ({ clientId }: { clientId: string }) => {
   const [newLabel, setNewLabel] = useState("");
   const [newDate, setNewDate] = useState("");
   const [isAddition, setIsAddition] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Tranche | null>(null);
 
   const fetchTranches = useCallback(async () => {
     const { data } = await supabase
@@ -88,14 +90,12 @@ const ManageTranches = ({ clientId }: { clientId: string }) => {
     setAdding(false);
   };
 
-  const handleDelete = async (tranche: Tranche) => {
-    if (!window.confirm(`Delete "${tranche.label}" and all its holdings? This cannot be undone.`)) {
-      return;
-    }
-
-    await supabase.from("holdings").delete().eq("tranche_id", tranche.id);
-    await supabase.from("tranches").delete().eq("id", tranche.id);
-    toast({ title: "Tranche deleted", description: `${tranche.label} and its holdings removed` });
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    await supabase.from("holdings").delete().eq("tranche_id", deleteTarget.id);
+    await supabase.from("tranches").delete().eq("id", deleteTarget.id);
+    toast({ title: "Tranche deleted", description: `${deleteTarget.label} and its holdings removed` });
+    setDeleteTarget(null);
     fetchTranches();
   };
 
@@ -144,7 +144,7 @@ const ManageTranches = ({ clientId }: { clientId: string }) => {
                 variant="ghost"
                 size="icon"
                 className="text-muted-foreground hover:text-destructive"
-                onClick={() => handleDelete(t)}
+                onClick={() => setDeleteTarget(t)}
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
@@ -184,6 +184,21 @@ const ManageTranches = ({ clientId }: { clientId: string }) => {
           </div>
         </div>
       </Card>
+
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Delete Tranche</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Delete <span className="font-semibold text-foreground">{deleteTarget?.label}</span> and all its holdings? This cannot be undone.
+          </p>
+          <div className="flex gap-3 pt-1">
+            <Button variant="outline" className="flex-1" onClick={() => setDeleteTarget(null)}>Cancel</Button>
+            <Button variant="destructive" className="flex-1" onClick={handleDelete}>Delete</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

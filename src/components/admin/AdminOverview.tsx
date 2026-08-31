@@ -35,7 +35,6 @@ const AdminOverview = () => {
   const totalAUM = clients.reduce((sum, c) => sum + c.allocated_amount + (c.stars_allocated_amount || 0), 0);
   const eliteCount = clients.filter((c) => c.plan === "elite").length;
   const primeCount = clients.filter((c) => c.plan === "prime").length;
-  const checkupCount = clients.filter((c) => c.plan === "checkup").length;
   const starsCount = clients.filter((c) => c.has_stars).length;
 
   const statCards = [

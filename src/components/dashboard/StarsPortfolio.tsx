@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { ExternalLink, Loader2, Trash2, Banknote } from "lucide-react";
+import { ExternalLink, Loader2, Trash2, Banknote, Plus } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -8,6 +9,7 @@ import PortfolioSummary from "./PortfolioSummary";
 import RecordSaleDialog, { SaleTarget } from "./RecordSaleDialog";
 import RealizedPnlTable from "./RealizedPnlTable";
 import EditableCell from "./EditableCell";
+import AddStockDialog from "@/components/admin/AddStockDialog";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import { supabase } from "@/lib/supabase";
 import { refreshLivePrices } from "@/lib/prices";
@@ -30,6 +32,8 @@ const StarsPortfolio = ({ clientId, onStockRemoved }: { clientId?: string; onSto
   const [saleTarget, setSaleTarget] = useState<SaleTarget | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [addStockOpen, setAddStockOpen] = useState(false);
+  const [removeTarget, setRemoveTarget] = useState<StarsHolding | null>(null);
 
   useEffect(() => {
     if (!targetId) return;
@@ -142,17 +146,31 @@ const StarsPortfolio = ({ clientId, onStockRemoved }: { clientId?: string; onSto
     );
   };
 
-  const handleRemoveStock = async (row: StarsHolding) => {
-    if (!window.confirm(`Remove ${row.symbol} from Stars portfolio? This deletes its holdings and recommendation history.`)) return;
-    await supabase.from("recommendation_log").delete().eq("client_id", targetId).eq("stock_id", row.stock_id);
-    const { error } = await supabase.from("portfolio_stocks").delete().eq("id", row.portfolio_stock_id);
+  const handleRemoveStock = async () => {
+    if (!removeTarget) return;
+    await supabase.from("recommendation_log").delete().eq("client_id", targetId).eq("stock_id", removeTarget.stock_id);
+    const { error } = await supabase.from("portfolio_stocks").delete().eq("id", removeTarget.portfolio_stock_id);
     if (error) {
       toast({ title: "Failed to remove", description: error.message, variant: "destructive" });
     } else {
-      setHoldings((prev) => prev.filter((h) => h.portfolio_stock_id !== row.portfolio_stock_id));
-      toast({ title: `${row.symbol} removed from Stars portfolio` });
+      setHoldings((prev) => prev.filter((h) => h.portfolio_stock_id !== removeTarget.portfolio_stock_id));
+      toast({ title: `${removeTarget.symbol} removed from Stars portfolio` });
       onStockRemoved?.();
     }
+    setRemoveTarget(null);
+  };
+
+  const handleDateChange = async (row: StarsHolding, value: string) => {
+    await supabase
+      .from("recommendation_log")
+      .update({ recommendation_date: value })
+      .eq("client_id", targetId)
+      .eq("stock_id", row.stock_id)
+      .eq("plan_type", "stars")
+      .eq("type", "buy");
+    setHoldings((prev) =>
+      prev.map((h) => h.portfolio_stock_id === row.portfolio_stock_id ? { ...h, recommendation_date: value } : h)
+    );
   };
 
   if (loading) {
@@ -176,6 +194,22 @@ const StarsPortfolio = ({ clientId, onStockRemoved }: { clientId?: string; onSto
           Mid-term stock recommendations with allocation-based investing
         </p>
       </div>
+
+      {isAdmin && (
+        <>
+          <Button size="sm" variant="outline" onClick={() => setAddStockOpen(true)}>
+            <Plus className="w-3.5 h-3.5 mr-1.5" />
+            Add Stock
+          </Button>
+          <AddStockDialog
+            clientId={targetId!}
+            planType="stars"
+            open={addStockOpen}
+            onOpenChange={setAddStockOpen}
+            onAdded={() => setReloadKey((k) => k + 1)}
+          />
+        </>
+      )}
 
       <PortfolioSummary
         totalInvestment={totalInvestment}
@@ -241,7 +275,16 @@ const StarsPortfolio = ({ clientId, onStockRemoved }: { clientId?: string; onSto
                   return (
                     <TableRow key={row.holding_id} className={`hover:bg-muted/30 ${isEmpty ? "opacity-60" : ""}`}>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                        {row.recommendation_date ? new Date(row.recommendation_date).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) : "—"}
+                        {isAdmin ? (
+                          <EditableCell
+                            value={row.recommendation_date || ""}
+                            onSave={(v) => handleDateChange(row, v)}
+                            type="date"
+                            placeholder="Set date"
+                          />
+                        ) : (
+                          row.recommendation_date ? new Date(row.recommendation_date).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) : "—"
+                        )}
                       </TableCell>
                       <TableCell className="font-semibold text-sm">{row.symbol}</TableCell>
                       <TableCell className="text-xs text-muted-foreground hidden xl:table-cell max-w-[180px] truncate">
@@ -342,7 +385,7 @@ const StarsPortfolio = ({ clientId, onStockRemoved }: { clientId?: string; onSto
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                            onClick={() => handleRemoveStock(row)}
+                            onClick={() => setRemoveTarget(row)}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
@@ -358,6 +401,22 @@ const StarsPortfolio = ({ clientId, onStockRemoved }: { clientId?: string; onSto
       </div>
 
       <RealizedPnlTable sales={sales} />
+
+      <Dialog open={!!removeTarget} onOpenChange={(open) => !open && setRemoveTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Remove Stock</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Remove <span className="font-semibold text-foreground">{removeTarget?.symbol}</span> from Stars portfolio?
+            This deletes its holdings and recommendation history.
+          </p>
+          <div className="flex gap-3 pt-1">
+            <Button variant="outline" className="flex-1" onClick={() => setRemoveTarget(null)}>Cancel</Button>
+            <Button variant="destructive" className="flex-1" onClick={handleRemoveStock}>Remove</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

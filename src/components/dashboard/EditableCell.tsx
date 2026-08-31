@@ -3,20 +3,23 @@ import { Input } from "@/components/ui/input";
 import { Check, Pencil, X } from "lucide-react";
 
 interface EditableCellProps {
-  value: number;
-  onSave: (value: number) => void;
+  value: number | string;
+  onSave: (value: any) => void;
   prefix?: string;
   placeholder?: string;
+  type?: "number" | "date";
 }
 
-const EditableCell = ({ value, onSave, prefix = "", placeholder = "Enter value" }: EditableCellProps) => {
+const EditableCell = ({ value, onSave, prefix = "", placeholder = "Enter value", type = "number" }: EditableCellProps) => {
   const [editing, setEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value.toString());
 
   const handleSave = () => {
-    const num = parseFloat(inputValue);
-    if (!isNaN(num) && num >= 0) {
-      onSave(num);
+    if (type === "date") {
+      if (inputValue) onSave(inputValue);
+    } else {
+      const num = parseFloat(inputValue);
+      if (!isNaN(num) && num >= 0) onSave(num);
     }
     setEditing(false);
   };
@@ -30,14 +33,14 @@ const EditableCell = ({ value, onSave, prefix = "", placeholder = "Enter value" 
     return (
       <div className="flex items-center gap-1">
         <Input
-          type="number"
+          type={type}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSave();
             if (e.key === "Escape") handleCancel();
           }}
-          className="h-7 w-24 text-sm text-right"
+          className={`h-7 text-sm ${type === "date" ? "w-36" : "w-24 text-right"}`}
           autoFocus
         />
         <button onClick={handleSave} className="p-1 text-success hover:bg-success/10 rounded">
@@ -50,16 +53,20 @@ const EditableCell = ({ value, onSave, prefix = "", placeholder = "Enter value" 
     );
   }
 
+  const displayValue = type === "date"
+    ? (value ? new Date(value as string).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) : "")
+    : (value === 0 ? "" : `${prefix}${(value as number).toLocaleString("en-IN")}`);
+
   return (
     <button
       onClick={() => setEditing(true)}
       className="group flex items-center gap-1.5 text-right hover:bg-muted/50 rounded px-1.5 py-0.5 -mx-1.5 transition-colors"
     >
       <span className="text-sm">
-        {value === 0 ? (
+        {!displayValue ? (
           <span className="text-muted-foreground italic text-xs">{placeholder}</span>
         ) : (
-          `${prefix}${value.toLocaleString("en-IN")}`
+          displayValue
         )}
       </span>
       <Pencil className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />

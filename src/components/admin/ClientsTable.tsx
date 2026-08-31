@@ -96,7 +96,7 @@ const ClientsTable = () => {
           />
         </div>
         <div className="flex gap-1.5">
-          {["all", "elite", "prime", "checkup"].map((plan) => (
+          {["all", "elite", "prime", "stars"].map((plan) => (
             <Button
               key={plan}
               variant={planFilter === plan ? "default" : "outline"}

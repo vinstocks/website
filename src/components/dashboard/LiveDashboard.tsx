@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Loader2, Trash2, Banknote } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import PortfolioSummary from "./PortfolioSummary";
@@ -22,6 +23,7 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
   const [saleTarget, setSaleTarget] = useState<SaleTarget | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [removeTarget, setRemoveTarget] = useState<LiveDashboardRow | null>(null);
 
   useEffect(() => {
     if (!targetId) return;
@@ -106,17 +108,18 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
     );
   }
 
-  const handleRemoveStock = async (row: LiveDashboardRow) => {
-    if (!window.confirm(`Remove ${row.symbol} from portfolio? This deletes all holdings across tranches and recommendation history.`)) return;
-    await supabase.from("recommendation_log").delete().eq("client_id", targetId).eq("stock_id", row.stock_id);
-    const { error } = await supabase.from("portfolio_stocks").delete().eq("id", row.portfolio_stock_id);
+  const handleRemoveStock = async () => {
+    if (!removeTarget) return;
+    await supabase.from("recommendation_log").delete().eq("client_id", targetId).eq("stock_id", removeTarget.stock_id);
+    const { error } = await supabase.from("portfolio_stocks").delete().eq("id", removeTarget.portfolio_stock_id);
     if (error) {
       toast({ title: "Failed to remove", description: error.message, variant: "destructive" });
     } else {
-      setRows((prev) => prev.filter((r) => r.portfolio_stock_id !== row.portfolio_stock_id));
-      toast({ title: `${row.symbol} removed from portfolio` });
+      setRows((prev) => prev.filter((r) => r.portfolio_stock_id !== removeTarget.portfolio_stock_id));
+      toast({ title: `${removeTarget.symbol} removed from portfolio` });
       onStockRemoved?.();
     }
+    setRemoveTarget(null);
   };
 
   const totalInvestment = rows.reduce((s, r) => s + r.invested_value, 0);
@@ -233,7 +236,7 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                            onClick={() => handleRemoveStock(row)}
+                            onClick={() => setRemoveTarget(row)}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
@@ -249,6 +252,22 @@ const LiveDashboard = ({ clientId, onStockRemoved }: { clientId?: string; onStoc
       </div>
 
       <RealizedPnlTable sales={sales} />
+
+      <Dialog open={!!removeTarget} onOpenChange={(open) => !open && setRemoveTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Remove Stock</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Remove <span className="font-semibold text-foreground">{removeTarget?.symbol}</span> from portfolio?
+            This deletes all holdings across tranches and recommendation history.
+          </p>
+          <div className="flex gap-3 pt-1">
+            <Button variant="outline" className="flex-1" onClick={() => setRemoveTarget(null)}>Cancel</Button>
+            <Button variant="destructive" className="flex-1" onClick={handleRemoveStock}>Remove</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

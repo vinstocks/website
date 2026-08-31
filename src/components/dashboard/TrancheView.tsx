@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Trash2, Plus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import PortfolioSummary from "./PortfolioSummary";
 import EditableCell from "./EditableCell";
+import AddStockDialog from "@/components/admin/AddStockDialog";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import { supabase } from "@/lib/supabase";
 import { refreshLivePrices } from "@/lib/prices";
@@ -22,6 +24,9 @@ const TrancheView = ({ clientId, onStockRemoved }: { clientId?: string; onStockR
   const [holdingsMap, setHoldingsMap] = useState<Record<string, TrancheHolding[]>>({});
   const [activeTranche, setActiveTranche] = useState("");
   const [loading, setLoading] = useState(true);
+  const [addStockOpen, setAddStockOpen] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [removeTarget, setRemoveTarget] = useState<TrancheHolding | null>(null);
 
   useEffect(() => {
     if (!targetId) return;
@@ -92,7 +97,7 @@ const TrancheView = ({ clientId, onStockRemoved }: { clientId?: string; onStockR
       setLoading(false);
     };
     fetch();
-  }, [targetId]);
+  }, [targetId, reloadKey]);
 
   const handleQuantityChange = async (holdingId: string, value: number) => {
     await supabase.from("holdings").update({ quantity: value }).eq("id", holdingId);
@@ -120,23 +125,29 @@ const TrancheView = ({ clientId, onStockRemoved }: { clientId?: string; onStockR
     });
   };
 
-  const handleRemoveStock = async (row: TrancheHolding) => {
-    if (!window.confirm(`Remove ${row.symbol} from portfolio? This deletes all holdings across all tranches and recommendation history.`)) return;
-    await supabase.from("recommendation_log").delete().eq("client_id", targetId).eq("stock_id", row.stock_id);
-    const { error } = await supabase.from("portfolio_stocks").delete().eq("id", row.portfolio_stock_id);
+  const handleRemoveStock = async () => {
+    if (!removeTarget) return;
+    await supabase.from("recommendation_log").delete().eq("client_id", targetId).eq("stock_id", removeTarget.stock_id);
+    const { error } = await supabase.from("portfolio_stocks").delete().eq("id", removeTarget.portfolio_stock_id);
     if (error) {
       toast({ title: "Failed to remove", description: error.message, variant: "destructive" });
     } else {
       setHoldingsMap((prev) => {
         const updated: Record<string, TrancheHolding[]> = {};
         for (const tid of Object.keys(prev)) {
-          updated[tid] = prev[tid].filter((h) => h.portfolio_stock_id !== row.portfolio_stock_id);
+          updated[tid] = prev[tid].filter((h) => h.portfolio_stock_id !== removeTarget.portfolio_stock_id);
         }
         return updated;
       });
-      toast({ title: `${row.symbol} removed from portfolio` });
+      toast({ title: `${removeTarget.symbol} removed from portfolio` });
       onStockRemoved?.();
     }
+    setRemoveTarget(null);
+  };
+
+  const handleTrancheDateChange = async (trancheId: string, value: string) => {
+    await supabase.from("tranches").update({ date: value }).eq("id", trancheId);
+    setTranches((prev) => prev.map((t) => t.id === trancheId ? { ...t, date: value } : t));
   };
 
   if (loading) {
@@ -172,6 +183,22 @@ const TrancheView = ({ clientId, onStockRemoved }: { clientId?: string; onStockR
           View and update your holdings per investment tranche
         </p>
       </div>
+
+      {isAdmin && (
+        <>
+          <Button size="sm" variant="outline" onClick={() => setAddStockOpen(true)}>
+            <Plus className="w-3.5 h-3.5 mr-1.5" />
+            Add Stock
+          </Button>
+          <AddStockDialog
+            clientId={targetId!}
+            planType="elite_prime"
+            open={addStockOpen}
+            onOpenChange={setAddStockOpen}
+            onAdded={() => setReloadKey((k) => k + 1)}
+          />
+        </>
+      )}
 
       <Tabs value={activeTranche} onValueChange={setActiveTranche}>
         <TabsList className="flex-wrap h-auto gap-1">
@@ -209,11 +236,21 @@ const TrancheView = ({ clientId, onStockRemoved }: { clientId?: string; onStockR
                 <div className="p-4 border-b border-border flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-semibold text-foreground">{t.label}</h3>
-                    {t.date && (
+                    {isAdmin ? (
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <span>Invested on</span>
+                        <EditableCell
+                          value={t.date || ""}
+                          onSave={(v) => handleTrancheDateChange(t.id, v)}
+                          type="date"
+                          placeholder="Set date"
+                        />
+                      </div>
+                    ) : t.date ? (
                       <p className="text-xs text-muted-foreground">
                         Invested on {new Date(t.date).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" })}
                       </p>
-                    )}
+                    ) : null}
                   </div>
                   {tHoldings.length > 0 && tHoldings.every((h) => h.quantity === 0) && (
                     <Badge variant="outline" className="text-xs">
@@ -294,7 +331,7 @@ const TrancheView = ({ clientId, onStockRemoved }: { clientId?: string; onStockR
                                   variant="ghost"
                                   size="icon"
                                   className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                                  onClick={() => handleRemoveStock(row)}
+                                  onClick={() => setRemoveTarget(row)}
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </Button>
@@ -318,6 +355,22 @@ const TrancheView = ({ clientId, onStockRemoved }: { clientId?: string; onStockR
           );
         })}
       </Tabs>
+
+      <Dialog open={!!removeTarget} onOpenChange={(open) => !open && setRemoveTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Remove Stock</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Remove <span className="font-semibold text-foreground">{removeTarget?.symbol}</span> from portfolio?
+            This deletes all holdings across all tranches and recommendation history.
+          </p>
+          <div className="flex gap-3 pt-1">
+            <Button variant="outline" className="flex-1" onClick={() => setRemoveTarget(null)}>Cancel</Button>
+            <Button variant="destructive" className="flex-1" onClick={handleRemoveStock}>Remove</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
