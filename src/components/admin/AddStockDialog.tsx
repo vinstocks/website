@@ -79,6 +79,14 @@ const AddStockDialog = ({ clientId, planType, open, onOpenChange, onAdded }: Add
 
       if (psErr) throw psErr;
 
+      await supabase.from("recommendation_log").insert({
+        client_id: clientId,
+        stock_id: selectedStock.id,
+        plan_type: planType,
+        type: "buy",
+        recommendation_date: new Date().toISOString().split("T")[0],
+      });
+
       if (planType === "elite_prime") {
         const { data: tranches } = await supabase
           .from("tranches")
