@@ -47,7 +47,7 @@ const App = () => (
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
             <Route path="/pre-ipo" element={<PublicLayout><PreIPO /></PublicLayout>} />
             <Route path="/sip-calculator" element={<PublicLayout><SipCalculator /></PublicLayout>} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/vindash" element={<Login />} />
 
             <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
               <Route index element={<DashboardHome />} />

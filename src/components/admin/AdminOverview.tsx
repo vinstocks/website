@@ -72,7 +72,7 @@ const AdminOverview = () => {
             {[
               { plan: "Elite", count: eliteCount, color: "bg-primary", total: clients.length },
               { plan: "Prime", count: primeCount, color: "bg-secondary", total: clients.length },
-              { plan: "Checkup", count: checkupCount, color: "bg-muted-foreground", total: clients.length },
+              { plan: "Stars", count: starsCount, color: "bg-amber-500", total: clients.length },
             ].map((item) => (
               <div key={item.plan} className="flex items-center gap-3">
                 <span className="text-sm font-medium w-16">{item.plan}</span>

@@ -99,12 +99,6 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
               </a>
             ))}
             <a
-              href="/login"
-              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
-            >
-              Client Dashboard
-            </a>
-            <a
               href={hash("#pricing")}
               className="px-5 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold hover:opacity-90 transition-opacity text-sm"
             >
@@ -167,13 +161,6 @@ const Navbar = ({ isPreIPOPage = false }: NavbarProps) => {
                 {link.name}
               </a>
             ))}
-            <a
-              href="/login"
-              className="block py-3 text-muted-foreground hover:text-foreground transition-colors font-medium"
-              onClick={() => setIsOpen(false)}
-            >
-              Client Dashboard
-            </a>
             <a
               href={hash("#pricing")}
               className="block mt-4 px-6 py-3 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold text-center"
