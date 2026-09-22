@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import PreIPO from "./pages/PreIPO";
 import SipCalculator from "./pages/SipCalculator";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Login from "./pages/Login";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import LeadCapturePopup from "@/components/LeadCapturePopup";
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
             <Route path="/pre-ipo" element={<PublicLayout><PreIPO /></PublicLayout>} />
             <Route path="/sip-calculator" element={<PublicLayout><SipCalculator /></PublicLayout>} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/vindash" element={<Login />} />
 
             <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
