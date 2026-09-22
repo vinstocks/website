@@ -1,4 +1,13 @@
-const PrivacyPolicy = () => (
+import { useEffect } from "react";
+
+const PrivacyPolicy = () => {
+  useEffect(() => {
+    const prev = document.body.style.background;
+    document.body.style.setProperty("background", "var(--paper)", "important");
+    return () => { document.body.style.background = prev; };
+  }, []);
+
+  return (
   <div
     style={{
       fontFamily: '"Literata", Georgia, "Times New Roman", serif',
@@ -6,6 +15,8 @@ const PrivacyPolicy = () => (
       lineHeight: 1.7,
       background: "var(--paper)",
       color: "var(--ink)",
+      minHeight: "100vh",
+      width: "100%",
     }}
   >
     <style>{`
@@ -23,7 +34,7 @@ const PrivacyPolicy = () => (
         --paper: #12171E; --ink: #E6E9ED; --muted: #9AA4B1;
         --accent: #6FBDB5; --rule: #2A323D; --note: #18242A;
       }
-      .pp-main { max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+      .pp-main { margin: 0 auto; padding: 3.5rem 5% 5rem; text-align: left; }
       .pp-header { border-bottom: 1px solid var(--rule); padding-bottom: 1.75rem; margin-bottom: 2.25rem; }
       .pp-brand { font-family: "IBM Plex Sans", system-ui, sans-serif; font-weight: 600; color: var(--accent); font-size: 1rem; margin: 0 0 1.25rem; }
       .pp-main h1 { font-family: "IBM Plex Sans", system-ui, sans-serif; font-weight: 600; font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.15; margin: 0 0 .75rem; letter-spacing: -0.01em; color: var(--ink); }
@@ -132,6 +143,7 @@ const PrivacyPolicy = () => (
       </footer>
     </main>
   </div>
-);
+  );
+};
 
 export default PrivacyPolicy;
